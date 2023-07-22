@@ -12,6 +12,9 @@ fun Application.configureRouting() {
     configureLogin()
     configureAuthorisation()
     routing {
+        get("/check") {
+            call.respondText("This Worked")
+        }
         authenticate("auth-jwt") {
             get("/hello") {
                 val principal = call.principal<JWTPrincipal>()
