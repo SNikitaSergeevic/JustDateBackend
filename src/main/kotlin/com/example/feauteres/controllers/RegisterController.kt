@@ -1,14 +1,11 @@
-package com.example.feauteres.register
+package com.example.feauteres.controllers
 
 import com.example.feauteres.model.*
-import com.example.feauteres.token.TokenController
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import kotlinx.serialization.Serializable
-import org.h2.engine.User
 import java.util.*
 
 @Serializable
@@ -20,17 +17,18 @@ data class RegisterReceiveRemote(val email: String,
                                  val age: Int,
                                  val sex: String)
 
-data class RegisterResponseRemote(val token: String)
+@Serializable
+data class RegisterResponseRemote(val ownerid: String, val userpublicid: String, var refreshToken: String)
 
 class RegisterController(private val call: ApplicationCall) {
 
-    suspend fun registerOwner(): Pair<UUID?, String> {
+    suspend fun registerOwner(): RegisterResponseRemote? {
         val registerReceiveRemote = call.receive<RegisterReceiveRemote>()
-        val ownerModel = OwnerModel.fetchOwner(email = registerReceiveRemote.email)
+        val ownerModel = OwnerModel.fetch(email = registerReceiveRemote.email)
 
         if (ownerModel != null) {
             call.respond(HttpStatusCode.Conflict, "User already exist")
-            return Pair(null, "")
+            return null
         } else {
             val uuidForOwner = UUID.randomUUID()
             val uuidForUserspublic = UUID.randomUUID()
@@ -56,7 +54,7 @@ class RegisterController(private val call: ApplicationCall) {
             OwnerModel.insert(ownerDTO)
             val refreshToken = tokenController.createRefreshToken()
 
-            return Pair(uuidForOwner, refreshToken)
+            return RegisterResponseRemote(uuidForOwner.toString(), uuidForUserspublic.toString(), refreshToken)
         }
     }
 }

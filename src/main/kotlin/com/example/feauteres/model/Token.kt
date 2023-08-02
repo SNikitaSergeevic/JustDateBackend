@@ -21,7 +21,7 @@ object TokenModel: Table("justdate_schema.token") {
     private val token = TokenModel.varchar("token", 255)
 
     fun insert(tokenDTO: TokenDTO) {
-        println("start token insert")
+        println("insert token START")
         transaction {
             TokenModel.insert {
                 it[id] = tokenDTO.id
@@ -32,6 +32,7 @@ object TokenModel: Table("justdate_schema.token") {
     }
 
     fun fetchToken(ownerid: UUID): TokenDTO? {
+        println("fetchToken START")
         return try {
             transaction {
                 val tokenModel = TokenModel.select {TokenModel.ownerid.eq(ownerid)}.single()
@@ -45,6 +46,7 @@ object TokenModel: Table("justdate_schema.token") {
     }
 
     fun deleteToken(ownerid: UUID) {
+        println("deleteToken START")
         try {
             transaction {
                 val del = TokenModel.deleteWhere {TokenModel.ownerid.eq(ownerid)}

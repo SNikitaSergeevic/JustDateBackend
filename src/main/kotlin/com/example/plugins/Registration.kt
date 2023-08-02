@@ -2,7 +2,7 @@ package com.example.plugins
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import com.example.feauteres.register.RegisterController
+import com.example.feauteres.controllers.RegisterController
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -41,16 +41,17 @@ fun Application.configureRegistration() {
     }
 
     routing {
-        post("/registration") {
+        post(Endpoint.Registration.str) {
             val registerController = RegisterController(call)
-            val (ownerid, refreshToken) = registerController.registerOwner()
+            val registerResponseRemote = registerController.registerOwner()
 
-            if (ownerid != null) {
+            if (registerResponseRemote != null) {
                 val token = JWT.create()
                     .withAudience(audience)
                     .withIssuer(issuer)
-                    .withClaim("oid", ownerid.toString())
-                    .withClaim("rt", refreshToken)
+                    .withClaim("oid", registerResponseRemote.ownerid)
+                    .withClaim("upid", registerResponseRemote.userpublicid)
+                    .withClaim("rt", registerResponseRemote.refreshToken)
                     .withExpiresAt(Date(System.currentTimeMillis() + 6000000))
                     .sign(Algorithm.HMAC256(secret))
                 val hash = hashMapOf("token" to token)

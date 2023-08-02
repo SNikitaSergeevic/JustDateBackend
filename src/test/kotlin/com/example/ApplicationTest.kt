@@ -10,12 +10,13 @@ import com.example.plugins.*
 class ApplicationTest {
     @Test
     fun testRoot() = testApplication {
-        application {
-            configureRouting()
-        }
-        client.get("/").apply {
+//        application {
+//            configureRouting()
+//        }
+        client.get("/check").apply {
             assertEquals(HttpStatusCode.OK, status)
-            assertEquals("Hello World!", bodyAsText())
+            assertEquals("This Worked", bodyAsText())
         }
+
     }
 }

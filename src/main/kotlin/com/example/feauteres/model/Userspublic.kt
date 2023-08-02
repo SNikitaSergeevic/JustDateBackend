@@ -1,13 +1,11 @@
 package com.example.feauteres.model
 
 import kotlinx.serialization.Serializable
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
-@Serializable
-data class Userspublic(val id: String, val name: String, val description: String, val location: String, val age: Int, val sex: String)
 
 class UserspublicDTO(val id: UUID, val name: String, val description: String, val location: String, val age: Int, val sex: String)
 
@@ -31,4 +29,48 @@ object UserspublicModel: Table("justdate_schema.userspublic") {
             }
         }
     }
+
+    fun fetch(id: String): UserspublicDTO? {
+        return try {
+            transaction {
+                val userspublicModel = UserspublicModel.select {UserspublicModel.id.eq(UUID.fromString(id))}.single()
+                UserspublicDTO(id = userspublicModel[UserspublicModel.id],
+                    name = userspublicModel[UserspublicModel.name],
+                    description = userspublicModel[UserspublicModel.description],
+                    location = userspublicModel[UserspublicModel.location],
+                    age = userspublicModel[UserspublicModel.age],
+                    sex = userspublicModel[UserspublicModel.sex])
+            }
+        } catch(e: Exception) {
+            null
+        }
+    }
+
+    fun update(user: UserspublicDTO) {
+        print("userspublic UPDATE")
+        try {
+            transaction {
+                UserspublicModel.update({UserspublicModel.id eq user.id}) {
+                    it[name] = user.name
+                    it[description] = user.description
+                    it[location] = user.location
+                    it[age] = user.age
+                    it[sex] = user.sex
+                }
+            }
+        } catch(e: Exception) {
+            print(e)
+        }
+    }
+
+    fun delete(id: UUID) {
+        try {
+            transaction{
+                UserspublicModel.deleteWhere { UserspublicModel.id eq id}
+            }
+        } catch (e: Exception) {
+
+        }
+    }
+
 }

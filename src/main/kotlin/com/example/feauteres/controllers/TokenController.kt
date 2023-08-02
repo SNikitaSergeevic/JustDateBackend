@@ -1,22 +1,14 @@
-package com.example.feauteres.token
+package com.example.feauteres.controllers
 
-import com.auth0.jwt.JWT
-import com.auth0.jwt.algorithms.Algorithm
 import com.example.feauteres.model.TokenDTO
 import com.example.feauteres.model.TokenModel
-import com.example.feauteres.register.RegisterController
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.auth.*
-import io.ktor.server.auth.jwt.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
 import java.util.*
+import kotlin.random.Random
 
 class TokenController(private val email: String, private val ownerid: UUID) {
     suspend fun createRefreshToken(): String {
 
-        val refreshToken = email.hashCode().toString()
+        val refreshToken = (Random.nextInt(1000).toString() + email).hashCode().toString()
 
         val tokenid: UUID = UUID.randomUUID()
 
@@ -28,6 +20,11 @@ class TokenController(private val email: String, private val ownerid: UUID) {
 
     fun deleteRefreshToken() {
         TokenModel.deleteToken(ownerid)
+    }
+
+    fun checkRefreshToken(): Boolean {
+        val tok = TokenModel.fetchToken(ownerid)
+        return (tok != null)
     }
 
 }

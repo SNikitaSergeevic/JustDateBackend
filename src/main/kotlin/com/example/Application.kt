@@ -49,11 +49,11 @@ import java.io.*
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 fun Application.module() {
-    configureSockets()
+//    configureSockets()
     configureSerialization()
     configureDatabases()
-    configureHTTP()
-    configureSecurity()
+    configureHTTP()  //swagger config
+//    configureSecurity()
     configureRouting()
 }
 
@@ -76,7 +76,7 @@ fun Application.module() {
         - проверяем их наличие и совпадение в бд
         - если все норм то удаляем ревреш токен и устанавливаем новый
         - ownerid и новый refreshToken отправляем
-    4. Попробовать тесты и Начать взаимодействие юзера
+    4. Update owner есть --- надо получше обработать данные и добавить фотки
 
 
 */
