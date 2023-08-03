@@ -11,6 +11,7 @@ import java.util.*
 
 
 fun Application.configureLogin() {
+
     val secret = environment.config.property("jwt.secret").getString()
     val issuer = environment.config.property("jwt.issuer").getString()
     val audience = environment.config.property("jwt.audience").getString()

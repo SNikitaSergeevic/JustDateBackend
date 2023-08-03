@@ -25,7 +25,7 @@ data class DeleteOwnerRemote(val id: String, val upid: String)
 class OwnerRemoteController(private val call: ApplicationCall) {
 
     suspend fun updateOwner() {
-        print("Owner remote controller updateOwner() start\n")
+        println("updateOwner() START\n")
         val updateRemote = call.receive<UpdateOwnerRemote>()
         OwnerModel.update(OwnerDTO(id = UUID.fromString(updateRemote.id),
                                         email = updateRemote.email,
@@ -38,6 +38,7 @@ class OwnerRemoteController(private val call: ApplicationCall) {
                                                 location = updateRemote.location,
                                                 age = updateRemote.age,
                                                 sex = updateRemote.sex))
+        call.respond(HttpStatusCode.OK, "Owner updated")
         print("Owner remote controller updateOwner() finish\n")
     }
 

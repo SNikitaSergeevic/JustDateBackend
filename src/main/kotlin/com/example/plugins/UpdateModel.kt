@@ -15,7 +15,7 @@ fun Application.configureUpdateModel() {
                 try {
                     val updateController = OwnerRemoteController(call)
                     updateController.updateOwner()
-                    call.respond(HttpStatusCode.OK)
+                    call.respond(HttpStatusCode.OK, "Owner updated")
                 } catch (e: Exception) {
                     call.respond(HttpStatusCode.Conflict)
                 }

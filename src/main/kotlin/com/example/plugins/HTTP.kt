@@ -6,6 +6,6 @@ import io.ktor.server.application.*
 
 fun Application.configureHTTP() {
     routing {
-        swaggerUI(path = "openapi")
+        swaggerUI(path = "openapi", swaggerFile = "openapi/documentation.yaml")
     }
 }
