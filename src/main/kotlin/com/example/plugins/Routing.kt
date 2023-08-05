@@ -1,6 +1,8 @@
 package com.example.plugins
 
 
+import com.example.feauteres.controllers.ImagesController
+import io.ktor.http.*
 import io.ktor.server.routing.*
 import io.ktor.server.response.*
 import io.ktor.server.application.*
@@ -27,6 +29,15 @@ fun Application.configureRouting() {
                 val id = principal?.get("oid")
                 call.respondText("Token for $id expires at $expiresAt.")
             }
+            get(Endpoint.GetImage.str) {
+                val imageid = call.parameters["imageId"]!!
+                val file = ImagesController().getImage(imageid)
+                if (file != null) {
+                    call.respondFile(file)
+                } else {
+                    call.respond(HttpStatusCode.NotFound)
+                }
+            }
         }
     }
 }
@@ -38,5 +49,7 @@ enum class Endpoint(val str: String) {
     Login("/login"),
     AuthCheck("/authCheck"),
     DeleteOwner("/auth/deleteOwner"),
-    UpdateOwner("/auth/updateOwner")
+    UpdateOwner("/auth/updateOwner"),
+    SetImage("/auth/setImage"),
+    GetImage("/auth/getImage/{imageId}")
 }
