@@ -6,13 +6,16 @@ import com.example.feauteres.model.UserspublicDTO
 import com.example.feauteres.model.UserspublicModel
 import io.ktor.http.content.*
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.util.*
 
 
 class ImagesController() {
+
    suspend fun setImage(multipart: MultiPartData) {
-        var text = ""
-        var fileName = ""
+       var text = ""
+       var fileName = ""
        var userpublic: UserspublicDTO? = null
 
         multipart.forEachPart {  part ->
@@ -49,7 +52,6 @@ class ImagesController() {
                     } else {
                         println("Userpublic this id NOT FOUND")
                     }
-
                 }
 
                 is PartData.BinaryItem -> Unit
@@ -60,22 +62,47 @@ class ImagesController() {
         }
     }
 
-    suspend fun getImage(id: String): File? {
-        val image = ImagesModel.fetch(UUID.fromString(id))
+    fun getImage(id: String): MutableList<File>? {
+//        val image = ImagesModel.fetch(UUID.fromString(id))
 
-        return if (image != null) {
-            val fileName = image.filename
-            val file = File("src/main/resources/static/users/${image.userid}/$fileName")
-            return if (file.exists()) {
-                file
-            } else {
-                println("File not exist")
-                null
-            }
-        } else {
-            println("User this id not exist")
-            null
-        }
+//        return if (image != null) {
+//            val fileName = image.filename
+//            val file = File("src/main/resources/static/users/${image.userid}/$fileName")
+//            return if (file.exists()) {
+//                file
+//            } else {
+//                println("File not exist")
+//                null
+//            }
+//        } else {
+//            println("User this id not exist")
+//            null
+//        }
+//        return if (image != null) {
+            val projectDirAbsolutePath = Paths.get("").toAbsolutePath().toString()
+            val imagesList: MutableList<File> = mutableListOf<File>()
+            val resPath = Paths.get("/home/osmilijey/usr/projects/JustDateBackend/src/main/resources/static/users/$id/")
+            val paths = Files.walk(resPath)
+//                .filter {item -> Files.isRegularFile(item)}
+//                .filter {item -> item.toString().endsWith(".txt")}
+                .forEach {item ->
+                    val file = File("/home/osmilijey/usr/projects/JustDateBackend/src/main/resources/static/users/$id/${item.fileName}")
+
+                    if (file.exists()) {
+                        imagesList.add(file)
+                    } else {
+                        println("AAAAAAAAAAAA else  ${item.fileName}")
+                    }
+                }
+            println("AAAAAAAAAAAB $imagesList")
+
+            return imagesList
+//        } else {
+//            println("AAAAAAAAAAAA null")
+//            null
+//        }
+
+
     }
 
 }

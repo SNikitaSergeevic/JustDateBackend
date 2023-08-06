@@ -11,7 +11,7 @@ import io.ktor.server.request.*
 import java.util.*
 
 @Serializable
-data class AuthorisationReceiveRemote(val ownerid: String, val refreshToken: String)
+data class AuthorisationReceiveRemote(val ownerid: String, val rToken: String)
 
 
 class AuthorisationController(private val call: ApplicationCall) {
@@ -20,7 +20,7 @@ class AuthorisationController(private val call: ApplicationCall) {
         val tokenDTO = TokenModel.fetchToken(UUID.fromString(authorisationReceiveRemote.ownerid))
 
         if (tokenDTO != null) {
-            if (authorisationReceiveRemote.refreshToken.toInt() == tokenDTO.token.toInt()) { // FIXME check toInt Result
+            if (authorisationReceiveRemote.rToken.toInt() == tokenDTO.token.toInt()) { // FIXME check toInt Result
                 val ownerDTO = OwnerModel.fetch(UUID.fromString(authorisationReceiveRemote.ownerid))
                 if (ownerDTO != null) {
                     val userpublic = UserspublicModel.fetch(ownerDTO.userpublicid.toString())

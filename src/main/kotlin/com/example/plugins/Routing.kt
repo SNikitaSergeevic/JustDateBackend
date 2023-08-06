@@ -32,8 +32,16 @@ fun Application.configureRouting() {
             get(Endpoint.GetImage.str) {
                 val imageid = call.parameters["imageId"]!!
                 val file = ImagesController().getImage(imageid)
+
                 if (file != null) {
-                    call.respondFile(file)
+                    var images = byteArrayOf()
+                    val im = file.forEach{item ->
+                        images += item.readBytes()
+
+                    }
+                    println("BBB ${images.indices}")
+                    println(images.toString())
+                    call.respondBytes(images)
                 } else {
                     call.respond(HttpStatusCode.NotFound)
                 }
