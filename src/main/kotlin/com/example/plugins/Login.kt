@@ -32,7 +32,6 @@ fun Application.configureLogin() {
                     .sign(Algorithm.HMAC256(secret))
 //                val hash = hashMapOf("token" to token)
                 ownerResponse.accessToken = token
-                ownerResponse.refreshToken = "at"
                 call.respond(ownerResponse)
             }
         }

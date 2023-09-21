@@ -18,7 +18,7 @@ data class OwnerAuthResponse (val ownerid: String,
                               val sex: String,
                               var accessToken: String)
 
-class OwnerDTO ( val id: UUID, val email: String, val password: String, val location: String, val userpublicid: UUID)
+class OwnerDTO (val id: UUID, val email: String, val password: String, val location: String, val userpublicid: UUID)
 
 object OwnerModel: Table("justdate_schema.owner") {
     private val id = OwnerModel.uuid("id")

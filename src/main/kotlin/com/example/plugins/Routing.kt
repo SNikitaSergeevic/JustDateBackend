@@ -2,6 +2,7 @@ package com.example.plugins
 
 
 import com.example.feauteres.controllers.ImagesController
+import com.example.feauteres.controllers.OwnerRemoteController
 import io.ktor.http.*
 import io.ktor.server.routing.*
 import io.ktor.server.response.*
@@ -46,6 +47,16 @@ fun Application.configureRouting() {
                     call.respond(HttpStatusCode.NotFound)
                 }
             }
+            post(Endpoint.FetchOwner.str) {
+                val ownerController = OwnerRemoteController(call)
+                val owner = ownerController.fetchOwner()
+
+                if (owner != null) {
+                    call.respond(owner)
+                } else {
+                    call.respond(HttpStatusCode.NotFound)
+                }
+            }
         }
     }
 }
@@ -59,5 +70,6 @@ enum class Endpoint(val str: String) {
     DeleteOwner("/auth/deleteOwner"),
     UpdateOwner("/auth/updateOwner"),
     SetImage("/auth/setImage"),
-    GetImage("/auth/getImage/{imageId}")
+    GetImage("/auth/getImage/{imageId}"),
+    FetchOwner("/auth/fetchOwner")
 }

@@ -46,16 +46,16 @@ fun Application.configureRegistration() {
             val registerResponseRemote = registerController.registerOwner()
 
             if (registerResponseRemote != null) {
-                val token = JWT.create()
-                    .withAudience(audience)
-                    .withIssuer(issuer)
-                    .withClaim("oid", registerResponseRemote.ownerid)
-                    .withClaim("upid", registerResponseRemote.userpublicid)
-                    .withClaim("rt", registerResponseRemote.refreshToken)
-                    .withExpiresAt(Date(System.currentTimeMillis() + 6000000))
-                    .sign(Algorithm.HMAC256(secret))
-                val hash = hashMapOf("token" to token)
-                call.respond(hash)
+//                val token = JWT.create()
+//                    .withAudience(audience)
+//                    .withIssuer(issuer)
+//                    .withClaim("oid", registerResponseRemote.ownerid)
+//                    .withClaim("upid", registerResponseRemote.userpublicid)
+//                    .withClaim("rt", registerResponseRemote.refreshToken)
+//                    .withExpiresAt(Date(System.currentTimeMillis() + 6000000))
+//                    .sign(Algorithm.HMAC256(secret))
+//                val hash = hashMapOf("token" to token)
+                call.respond(HttpStatusCode.OK, "user has been register")
             }
         }
     }

@@ -22,6 +22,12 @@ data class UpdateOwnerRemote(val id: String,
 @Serializable
 data class DeleteOwnerRemote(val id: String, val upid: String)
 
+@Serializable
+data class FetchOwnerRemote(val id: String)
+
+@Serializable
+data class FetchOwnerRespond(val id: String, val email: String, val password: String, val location: String, val userpublicid: String, val rToken: String)
+
 class OwnerRemoteController(private val call: ApplicationCall) {
 
     suspend fun updateOwner() {
@@ -42,6 +48,24 @@ class OwnerRemoteController(private val call: ApplicationCall) {
         print("Owner remote controller updateOwner() finish\n")
     }
 
+    suspend fun fetchOwner(): FetchOwnerRespond? {
+        println("fetchOwner() START")
+        val id = call.receive<FetchOwnerRemote>().id
+        val owner = OwnerModel.fetch(UUID.fromString(id))
+        return if (owner != null) {
+            val token = TokenModel.fetchToken(owner.id)
+            return if (token != null) {
+                 FetchOwnerRespond(id = owner.id.toString(), email = owner.email, location = owner.location, password = owner.password, userpublicid = owner.userpublicid.toString(), rToken = token.token.toString() )
+            } else {
+                null
+            }
+        } else {
+            null
+        }
+    }
+
+
+
     suspend fun deleteOwner() {
         print("deleteOwner start \n")
         try {
@@ -53,7 +77,6 @@ class OwnerRemoteController(private val call: ApplicationCall) {
         } catch(e: Exception) {
 
         }
-
     }
 
 }

@@ -31,7 +31,7 @@ fun Application.configureAuthorisation() {
                     .sign(Algorithm.HMAC256(secret))
 //                val hash = hashMapOf("token" to token)
                 authResponse.accessToken = token
-                authResponse.refreshToken = "at"
+//                authResponse.refreshToken = "at"
                 call.respond(authResponse)
             }
         }
