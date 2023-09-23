@@ -3,6 +3,7 @@ package com.example.plugins
 
 import com.example.feauteres.controllers.ImagesController
 import com.example.feauteres.controllers.OwnerRemoteController
+import com.example.feauteres.controllers.UserpublicController
 import io.ktor.http.*
 import io.ktor.server.routing.*
 import io.ktor.server.response.*
@@ -17,6 +18,9 @@ fun Application.configureRouting() {
     configureLogin()
     configureAuthorisation()
     configureUpdateModel()
+    configureMatching()
+
+
 
     routing {
 
@@ -71,5 +75,6 @@ enum class Endpoint(val str: String) {
     UpdateOwner("/auth/updateOwner"),
     SetImage("/auth/setImage"),
     GetImage("/auth/getImage/{imageId}"),
-    FetchOwner("/auth/fetchOwner")
+    FetchOwner("/auth/fetchOwner"),
+    FetchUserpublicOnSex("/auth/fetchUserpublicOnSex")
 }

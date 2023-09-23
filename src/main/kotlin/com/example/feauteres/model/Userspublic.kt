@@ -46,6 +46,22 @@ object UserspublicModel: Table("justdate_schema.userspublic") {
         }
     }
 
+    fun fetchOnSex(sex: String): List<UserspublicDTO>? {
+        return try {
+            transaction {
+                val userpublicModel = UserspublicModel.select {UserspublicModel.sex.eq(sex)}
+                userpublicModel.map{UserspublicDTO(id = it[UserspublicModel.id],
+                    name = it[UserspublicModel.name],
+                    description = it[UserspublicModel.description],
+                    location = it[UserspublicModel.location],
+                    age = it[UserspublicModel.age],
+                    sex = it[UserspublicModel.sex])}
+            }
+        } catch(e: Exception) {
+            null
+        }
+    }
+
     fun update(user: UserspublicDTO) {
         print("userspublic UPDATE")
         try {

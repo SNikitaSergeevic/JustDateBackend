@@ -2,6 +2,7 @@ package com.example.plugins
 
 import com.example.feauteres.controllers.*
 import com.example.feauteres.controllers.OwnerRemoteController
+import com.example.feauteres.controllers.UserpublicController
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
@@ -36,12 +37,11 @@ fun Application.configureUpdateModel() {
                 val multipart = call.receiveMultipart()
                 imagesController.setImage(multipart = multipart)
             }
-
-
         }
     }
-
 }
+
+
 
 
 
