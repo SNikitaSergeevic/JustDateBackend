@@ -37,7 +37,7 @@ class UserpublicController(private val call: ApplicationCall) {
                                 sex = it.sex)
                 })
         } else {return null}
-        
-    }
 
+    }
+    
 }

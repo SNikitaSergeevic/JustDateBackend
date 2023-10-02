@@ -15,7 +15,7 @@ import java.util.*
 
 fun Application.configureMatching() {
     routing {
-        authenticate("auth-jwt") {
+        // authenticate("auth-jwt") {
             post(Endpoint.FetchUserpublicOnSex.str) {
                 try {
                     val userpublicController = UserpublicController(call)
@@ -29,6 +29,6 @@ fun Application.configureMatching() {
                     call.respond(HttpStatusCode.NotFound)
                 }
             }
-        }
+        // }
     }
 }
