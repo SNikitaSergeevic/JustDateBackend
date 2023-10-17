@@ -19,6 +19,7 @@ fun Application.configureUpdateModel() {
     routing {
         authenticate("auth-jwt") {
             post(Endpoint.UpdateOwner.str) {
+                println("start update owner router")
                 try {
                     val updateController = OwnerRemoteController(call)
                     updateController.updateOwner()
@@ -29,13 +30,16 @@ fun Application.configureUpdateModel() {
             }
 
             post(Endpoint.DeleteOwner.str) {
+                
                 val ownerController = OwnerRemoteController(call)
                 ownerController.deleteOwner()
             }
 
             post(Endpoint.SetImage.str) {
+                println("START SET IMAGE ROUTER")
                 val multipart = call.receiveMultipart()
                 imagesController.setImage(multipart = multipart)
+                
             }
         }
     }

@@ -46,6 +46,21 @@ object ImagesModel: Table("justdate_schema.images") {
         }
     }
 
+    fun fetchWithUserspublicid(id: UUID): List<ImagesDTO>? {
+        return try {
+            transaction {
+                var imageModel = ImagesModel.select {ImagesModel.userid.eq(id)}
+                imageModel.map {
+                    ImagesDTO(id = it[ImagesModel.id],
+                    path = it[ImagesModel.path],
+                    userid = it[ImagesModel.userid],
+                    filename = it[ImagesModel.filename])}
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     fun update(image: ImagesDTO) {
         println("updateImages START")
         try {

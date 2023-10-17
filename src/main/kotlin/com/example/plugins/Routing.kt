@@ -34,9 +34,9 @@ fun Application.configureRouting() {
                 val id = principal?.get("oid")
                 call.respondText("Token for $id expires at $expiresAt.")
             }
-            get(Endpoint.GetImage.str) {
+            get(Endpoint.GetImages.str) {
                 val imageid = call.parameters["imageId"]!!
-                val file = ImagesController().getImage(imageid)
+                val file = ImagesController().getImages(imageid)
 
                 if (file != null) {
                     var images = byteArrayOf()
@@ -51,6 +51,27 @@ fun Application.configureRouting() {
                     call.respond(HttpStatusCode.NotFound)
                 }
             }
+
+            get(Endpoint.GetImage.str) {
+                val userspublicid = call.parameters["userspublicid"]!!
+                val imageid = call.parameters["imageid"]!!
+                var file = ImagesController().getImage(userspublicid, imageid)
+                call.respondBytes(file!!.readBytes()!!)
+            }
+
+            get(Endpoint.GetImagesIdWithUserspublicid.str) {
+                val userspublicid = call.parameters["userpublicid"]!!
+                val imagesIds = ImagesController().getIdAllImagesOfUser(userspublicid)
+
+                if (imagesIds != null) {
+                    call.respond(imagesIds)
+                } else {
+                    call.respond(HttpStatusCode.NotFound)
+                }
+                
+
+            }
+
             post(Endpoint.FetchOwner.str) {
                 val ownerController = OwnerRemoteController(call)
                 val owner = ownerController.fetchOwner()
@@ -74,7 +95,9 @@ enum class Endpoint(val str: String) {
     DeleteOwner("/auth/deleteOwner"),
     UpdateOwner("/auth/updateOwner"),
     SetImage("/auth/setImage"),
-    GetImage("/auth/getImage/{imageId}"),
+    GetImages("/auth/getImage/{imageId}"), 
+    GetImage("/auth/getImage/{userspublicid}/{imageid}"),
+    GetImagesIdWithUserspublicid("/auth/getImagesId/{userpublicid}"),
     FetchOwner("/auth/fetchOwner"),
     FetchUserpublicOnSex("/auth/fetchUserpublicOnSex")
 }

@@ -2,6 +2,7 @@ package com.example.feauteres.controllers
 
 import com.example.feauteres.model.ImagesDTO
 import com.example.feauteres.model.ImagesModel
+import com.example.feauteres.model.ImagesResponse
 import com.example.feauteres.model.UserspublicDTO
 import com.example.feauteres.model.UserspublicModel
 import io.ktor.http.content.*
@@ -62,7 +63,23 @@ class ImagesController() {
         }
     }
 
-    fun getImage(id: String): MutableList<File>? {
+    fun getImage(userspublicid: String, imageid: String): File? {
+        val fileName = "/home/osmilijey/usr/projects/JustDateBackend/src/main/resources/static/users/$userspublicid/$imageid" + ".jpg"
+        val file = File(fileName)
+        return file
+    }
+
+    fun getIdAllImagesOfUser(userpublicid: String): List<ImagesResponse>? {
+        var imagesDTO = ImagesModel.fetchWithUserspublicid(UUID.fromString(userpublicid))
+        var imagesIds: List<ImagesResponse>? = emptyList()
+        if (imagesDTO != null) {
+            imagesIds = imagesDTO.map {ImagesResponse(id = it.id.toString(), path = it.path, userid = it.userid.toString(), filename = it.filename)}
+        }
+
+        return imagesIds
+    }
+
+    fun getImages(id: String): MutableList<File>? { // OLD: get all images with userpublicid
 //        val image = ImagesModel.fetch(UUID.fromString(id))
 
 //        return if (image != null) {
