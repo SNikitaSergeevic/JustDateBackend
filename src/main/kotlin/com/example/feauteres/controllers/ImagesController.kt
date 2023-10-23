@@ -66,6 +66,7 @@ class ImagesController() {
     fun getImage(userspublicid: String, imageid: String): File? {
         val fileName = "/home/osmilijey/usr/projects/JustDateBackend/src/main/resources/static/users/$userspublicid/$imageid" + ".jpg"
         val file = File(fileName)
+        println(fileName)
         return file
     }
 

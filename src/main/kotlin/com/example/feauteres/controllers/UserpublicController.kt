@@ -29,46 +29,6 @@ class UserpublicController(private val call: ApplicationCall) {
         val users = UserspublicModel.fetchOnSex(receive.sex)
 
         if (users != null) {
-            
-            // пересложи заново
-            // return UserpublicResponse(userspublic = users.map {   
-                
-            //     val imagesResponseList = ImagesModel.fetchWithUserspublicid(it.id).let {it as? List<ImagesDTO>} ?: emptyList()
-            //     var imagesIdsList: List<String> = emptyList()
-            
-            //     // if imagesResponseList != null {
-            //         imagesResponseList.forEach {
-            //             imagesIdsList.add(it.id)
-            //         }
-            //     // }
-                
-            //     UserpublicRemote(userpublicid = it.id.toString(), 
-            //                     name = it.name,
-            //                     description = it.description,
-            //                     location = it.location,
-            //                     age = it.age.toString(),
-            //                     sex = it.sex,
-            //                     imagesId = imagesIdsList)
-            // })
-
-            
-            
-            // var userpublicRemote = UserpublicResponse(userspublic = emptyList())
-            // users.forEach {
-                
-            //     var imagesResponseList: List<ImagesResponse> = emptyList()
-            //     imagesResponseList = ImagesModel.fetchWithUserspublicid(it.id).let {it as? List<ImagesResponse>} ?: emptyList()
-                
-            //     userpublicRemote.userspublic += UserpublicRemote(userpublicid = it.id.toString(), 
-            //                     name = it.name,
-            //                     description = it.description,
-            //                     location = it.location,
-            //                     age = it.age.toString(),
-            //                     sex = it.sex,
-            //                     imagesId = imagesResponseList)
-
-            // }
-            // println(" userpublicRemote.userpublic.count = ${userpublicRemote.userspublic.count().toString()}")
             var userpublicRemote: UserpublicResponse = UserpublicResponse(userspublic = emptyList())
              userpublicRemote.userspublic = users.map {
                 val imagesResponseList = ImagesController().getIdAllImagesOfUser(it.id.toString())?.let {it as? List<ImagesResponse>} ?: emptyList()
