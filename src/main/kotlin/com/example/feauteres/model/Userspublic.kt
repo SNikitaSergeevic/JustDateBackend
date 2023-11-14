@@ -5,9 +5,16 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.javatime.date
+import java.time.LocalDate
 
 
-class UserspublicDTO(val id: UUID, val name: String, val description: String, val location: String, val age: Int, val sex: String)
+class UserspublicDTO(val id: UUID,
+                     val name: String,
+                     val description: String,
+                     val location: String,
+                     val age: Int,
+                     val sex: String)
 
 object UserspublicModel: Table("justdate_schema.userspublic") {
     private val id = UserspublicModel.uuid("id")
@@ -50,7 +57,8 @@ object UserspublicModel: Table("justdate_schema.userspublic") {
         return try {
             transaction {
                 val userpublicModel = UserspublicModel.select {UserspublicModel.sex.eq(sex)}
-                userpublicModel.map{UserspublicDTO(id = it[UserspublicModel.id],
+                userpublicModel.map{
+                    UserspublicDTO(id = it[UserspublicModel.id],
                     name = it[UserspublicModel.name],
                     description = it[UserspublicModel.description],
                     location = it[UserspublicModel.location],
@@ -90,3 +98,30 @@ object UserspublicModel: Table("justdate_schema.userspublic") {
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

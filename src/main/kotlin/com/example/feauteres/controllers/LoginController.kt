@@ -20,7 +20,15 @@ class LoginController(private val call: ApplicationCall) {
                 val tokenController = TokenController(loginReceiveRemote.email, ownerDTO.id)
                 tokenController.deleteRefreshToken()
                 val refreshToken = tokenController.createRefreshToken()
-                OwnerAuthResponse(ownerDTO.id.toString(), ownerDTO.userpublicid.toString(), refreshToken, userpublic.name, userpublic.description, userpublic.location, userpublic.age, userpublic.sex, "")
+                OwnerAuthResponse(ownerDTO.id.toString(),
+                    ownerDTO.userpublicid.toString(),
+                    refreshToken,
+                    userpublic.name,
+                    userpublic.description,
+                    userpublic.location,
+                    userpublic.age,
+                    userpublic.sex,
+                    "")
             } else {
                 null
             }

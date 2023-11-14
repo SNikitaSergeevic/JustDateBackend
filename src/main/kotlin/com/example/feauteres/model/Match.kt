@@ -3,7 +3,10 @@ package com.example.feauteres.model
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.javatime.date
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.time.LocalDate
+import java.util.Date
 import java.util.UUID
 
 @Serializable
@@ -71,5 +74,32 @@ object MatchModel: Table("justdate_schema.owner") {
 
         }
     }
-
 }
+
+//TODO: NewMatchModel
+
+object NewMatchModel: Table("justdate_schema.match") {
+    private val id: Column<UUID> = NewMatchModel.uuid("id")
+    private val cardIdSender: Column<UUID> = NewMatchModel.uuid("card_id_sen")
+    private val cardIdRecipient: Column<UUID> = NewMatchModel.uuid("card_id_rec")
+    private val recipientShow: Column<Int> = NewMatchModel.integer("rec_show")
+    private val senderShow: Column<Int> = NewMatchModel.integer("sen_show")
+    private val match: Column<Boolean> = NewMatchModel.bool("match")
+    private val createdAt: Column<LocalDate> = NewMatchModel.date("created_at")
+    private val idSender: Column<UUID> = NewMatchModel.uuid("id_sen")
+    private val idRecipient: Column<UUID> = NewMatchModel.uuid("id_rec")
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -20,13 +20,19 @@ data class UpdateOwnerRemote(val id: String,
                              val userspublicid: String)
 
 @Serializable
-data class DeleteOwnerRemote(val id: String, val upid: String)
+data class DeleteOwnerRemote(val id: String,
+                             val upid: String)
 
 @Serializable
 data class FetchOwnerRemote(val id: String)
 
 @Serializable
-data class FetchOwnerRespond(val id: String, val email: String, val password: String, val location: String, val userpublicid: String, val rToken: String)
+data class FetchOwnerRespond(val id: String,
+                             val email: String,
+                             val password: String,
+                             val location: String,
+                             val userpublicid: String,
+                             val rToken: String)
 
 class OwnerRemoteController(private val call: ApplicationCall) {
 
@@ -55,7 +61,12 @@ class OwnerRemoteController(private val call: ApplicationCall) {
         return if (owner != null) {
             val token = TokenModel.fetchToken(owner.id)
             return if (token != null) {
-                 FetchOwnerRespond(id = owner.id.toString(), email = owner.email, location = owner.location, password = owner.password, userpublicid = owner.userpublicid.toString(), rToken = token.token.toString() )
+                 FetchOwnerRespond(id = owner.id.toString(),
+                     email = owner.email,
+                     location = owner.location,
+                     password = owner.password,
+                     userpublicid = owner.userpublicid.toString(),
+                     rToken = token.token.toString() )
             } else {
                 null
             }

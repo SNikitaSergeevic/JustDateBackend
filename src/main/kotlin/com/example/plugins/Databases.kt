@@ -20,7 +20,14 @@ fun Application.configureDatabases() {
     Database.connect("jdbc:postgresql://localhost:5432/justdatedb",
         driver = "org.postgresql.Driver",
         user = "osmilijey",
-        password = "16710985")
+        password = "16710985") // local
+
+
+//    Database.connect("jdbc:postgresql://192.168.0.100:5432/justdatedb_1",
+//        driver = "org.postgresql.Driver",
+//        user = "osmilijey",
+//        password = "16710985") // net
+
 //    val dbConnection: Connection = connectToPostgres(embedded = false)
 
 }
@@ -50,10 +57,16 @@ fun Application.connectToPostgres(embedded: Boolean): Connection {
     if (embedded) {
         return DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "root", "")
     } else {
-        val url = environment.config.property("jdbc:postgresql://localhost:5432/justdatedb.justdate_schema").getString()
+        //todo: url1 - old db; url2 - new db for net connect; url3 - new db for local connect
+        val url1 = environment.config.property("jdbc:postgresql://localhost:5432/justdatedb.justdate_schema").getString()
+        val url2 = environment.config.property("jdbc:postgresql://192.168.0.100:5432/justdatedb_1").getString()
+        val url3 = environment.config.property("jdbc:postgresql://localhost:5432/justdatedb_1").getString()
+
+
         val user = environment.config.property("osmilijey").getString()
         val password = environment.config.property("16710985").getString()
 
-        return DriverManager.getConnection(url, user, password)
+        return DriverManager.getConnection(url1, user, password)
     }
 }
+

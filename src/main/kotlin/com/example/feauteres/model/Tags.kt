@@ -46,3 +46,16 @@ object TagsModel: Table("justdate_schema.tags") {
     }
 
 }
+
+// TODO: new TagModel
+
+object TagModel: Table("justdate_schema.tag") {
+    private val id: Column<UUID> = TagModel.uuid("id")
+    private val tag_name: Column<String> = TagModel.varchar("tag_name", 255)
+}
+
+object NewTagsModel: Table("justdate_schema.tags") {
+    private val id: Column<UUID> = NewTagsModel.uuid("id")
+    private val cardID: Column<UUID> = NewTagsModel.uuid("card_id")
+    private val tadID: Column<UUID> = NewTagsModel.uuid("tag_id")
+}

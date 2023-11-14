@@ -3,7 +3,9 @@ package com.example.feauteres.model
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.javatime.date
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.time.LocalDate
 import java.util.UUID
 
 @Serializable
@@ -12,7 +14,10 @@ data class ImagesResponse (val id: String,
                            val userid: String,
                            val filename: String)
 
-class ImagesDTO (val id: UUID, val path: String, val userid: UUID, val filename: String)
+class ImagesDTO (val id: UUID,
+                 val path: String,
+                 val userid: UUID,
+                 val filename: String)
 
 object ImagesModel: Table("justdate_schema.images") {
     private val id = ImagesModel.uuid("id")
@@ -89,5 +94,19 @@ object ImagesModel: Table("justdate_schema.images") {
 
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

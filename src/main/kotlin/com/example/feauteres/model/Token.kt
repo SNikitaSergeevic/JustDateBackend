@@ -1,19 +1,22 @@
 package com.example.feauteres.model
 
 import kotlinx.serialization.Serializable
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.javatime.date
 
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.time.LocalDate
 import java.util.UUID
 
 @Serializable
-data class Token(val id: String, val ownerid: String, val token: String)
+data class Token(val id: String,
+                 val ownerid: String,
+                 val token: String)
 
-class TokenDTO(val id: UUID, val ownerid: UUID, val token: String)
+class TokenDTO(val id: UUID,
+               val ownerid: UUID,
+               val token: String)
 
 object TokenModel: Table("justdate_schema.token") {
     private val id = TokenModel.uuid("id")

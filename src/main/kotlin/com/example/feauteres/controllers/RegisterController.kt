@@ -18,7 +18,9 @@ data class RegisterReceiveRemote(val email: String,
                                  val sex: String)
 
 @Serializable
-data class RegisterResponseRemote(val ownerid: String, val userpublicid: String, var refreshToken: String)
+data class RegisterResponseRemote(val ownerid: String,
+                                  val userpublicid: String,
+                                  var refreshToken: String)
 
 class RegisterController(private val call: ApplicationCall) {
 

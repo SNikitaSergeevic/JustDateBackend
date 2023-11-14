@@ -30,7 +30,15 @@ class AuthorisationController(private val call: ApplicationCall) {
 
                         val refreshToken = tokenController.createRefreshToken()
 
-                        return OwnerAuthResponse(ownerDTO.id.toString(), userpublic.id.toString(), refreshToken, userpublic.name, userpublic.description, userpublic.location, userpublic.age, userpublic.sex, "")
+                        return OwnerAuthResponse(ownerDTO.id.toString(),
+                            userpublic.id.toString(),
+                            refreshToken,
+                            userpublic.name,
+                            userpublic.description,
+                            userpublic.location,
+                            userpublic.age,
+                            userpublic.sex,
+                            "")
                     } else {
                         return null
                     }
