@@ -19,7 +19,7 @@ class ChatDTO (val id: UUID,
                val companionID: UUID,
                val createdAt: Date)
 
-object ChatModel: Table("justdate_schema.chat")  { // chat not exist in DB
+object ChatModel: Table("chat")  { // chat not exist in DB
     private val id: Column<UUID> = ChatModel.uuid("id")
     private val ownerID: Column<UUID> = ChatModel.uuid("owner_id")
     private val companionID: Column<UUID> = ChatModel.uuid("companion_id")
@@ -37,7 +37,7 @@ class MessageDTO (val id: UUID,
                   val text: String,
                   val createdAt: Date)
 
-object MessageModel: Table("justdate_schema.message") {
+object MessageModel: Table("message") {
     private val id: Column<UUID> = MessageModel.uuid("id")
     private val chatID: Column<UUID> = MessageModel.uuid("chat_id")
     private val senderID: Column<UUID> = MessageModel.uuid("sender_id")

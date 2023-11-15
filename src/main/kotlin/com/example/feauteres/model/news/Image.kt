@@ -24,7 +24,7 @@ class ImageDTO (val id: UUID,
 
 
 
-object ImageModel: Table("justdate_schema.image") {
+object ImageModel: Table("image") {
     private val id: Column<UUID> = ImageModel.uuid("id")
     private val path: Column<String> = ImageModel.varchar("path", 255)
     private val cardID: Column<UUID> = ImageModel.uuid("card_id")

@@ -52,7 +52,7 @@ fun Application.module() {
 //    configureSockets()
     configureSerialization()
     configureDatabases()
-    configureHTTP()  //swagger config
+//    configureHTTP()  //swagger config
 //    configureSecurity()
     configureRouting()
 }

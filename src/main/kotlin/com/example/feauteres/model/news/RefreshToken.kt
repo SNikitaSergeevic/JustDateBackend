@@ -23,7 +23,7 @@ class RefreshTokenDTO(val id: UUID,
                       val token: String,
                       val createdAt: LocalDate)
 
-object RefreshTokenModel: Table("justdate_schema.refresh_token") {
+object RefreshTokenModel: Table("refresh_token") {
     private val id: Column<UUID> = RefreshTokenModel.uuid("id")
     private val ownerID: Column<UUID> = RefreshTokenModel.uuid("owner_id")
     private val token: Column<String> = RefreshTokenModel.varchar("refresh_token", 255)

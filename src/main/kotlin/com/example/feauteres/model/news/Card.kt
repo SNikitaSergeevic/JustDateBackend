@@ -1,5 +1,6 @@
 package com.example.feauteres.model.news
 
+import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
@@ -9,7 +10,24 @@ import java.time.LocalDate
 
 
 
+@Serializable
+data class FetchCardSexReceiveRemote(val sex: String)
 
+@Serializable
+data class CardRemote(
+    val id: String,
+    val name: String,
+    val description: String,
+    val location: String,
+    val age: Int,
+    val sex: String,
+    val imageIDs: List<ImageResponse>,
+    val createdAt: String,
+    val lastAuth: String
+)
+
+@Serializable
+data class CardResponse(var cards: List<CardRemote>)
 
 class CardDTO(val id: UUID,
               val name: String,
@@ -20,7 +38,7 @@ class CardDTO(val id: UUID,
               val createdAt: LocalDate,
               val lastAuth: LocalDate)
 
-object CardModel: Table("justdate_1.card") {
+object CardModel: Table("card") {
     private val id: Column<UUID> = CardModel.uuid("id")
     private val name: Column<String> = CardModel.varchar("name", 255)
     private val description: Column<String> = CardModel.text("description")

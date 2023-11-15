@@ -78,7 +78,7 @@ object MatchModel: Table("justdate_schema.owner") {
 
 //TODO: NewMatchModel
 
-object NewMatchModel: Table("justdate_schema.match") {
+object NewMatchModel: Table("match") {
     private val id: Column<UUID> = NewMatchModel.uuid("id")
     private val cardIdSender: Column<UUID> = NewMatchModel.uuid("card_id_sen")
     private val cardIdRecipient: Column<UUID> = NewMatchModel.uuid("card_id_rec")

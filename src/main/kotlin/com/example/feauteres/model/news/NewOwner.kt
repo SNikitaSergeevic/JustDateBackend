@@ -24,7 +24,7 @@ data class UpdateNewOwnerRemote(val id: String,
 data class NewOwnerAuthResponse(val id: String,
                                 val cardID: String,
                                 val refreshToken: String,
-                                val accessToken: String,
+                                var accessToken: String,
                                 val name: String,
                                 val description: String,
                                 val location: String,
@@ -76,7 +76,7 @@ class NewOwnerDTO(val id: UUID,
                   val createdAt: LocalDate
 )
 
-object NewOwnerModel: Table("justdatedb_1.owner") {
+object NewOwnerModel: Table("owner") {
     private val id: Column<UUID> = NewOwnerModel.uuid("id")
     private val email: Column<String> = NewOwnerModel.varchar("email", 255)
     private val password: Column<String> = NewOwnerModel.varchar("password", 255)

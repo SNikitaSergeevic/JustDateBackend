@@ -17,7 +17,12 @@ fun Application.configureDatabases() {
 //            driver = "org.h2.Driver",
 //            password = ""
 //        )
-    Database.connect("jdbc:postgresql://localhost:5432/justdatedb",
+
+    val url1 = "jdbc:postgresql://localhost:5432/justdatedb.justdate_schema"
+    val url2 = "jdbc:postgresql://192.168.0.100:5432/justdatedb_1"
+    val url3 = "jdbc:postgresql://localhost:5432/justdatedb_1"
+
+    Database.connect(url2,
         driver = "org.postgresql.Driver",
         user = "osmilijey",
         password = "16710985") // local
@@ -66,7 +71,7 @@ fun Application.connectToPostgres(embedded: Boolean): Connection {
         val user = environment.config.property("osmilijey").getString()
         val password = environment.config.property("16710985").getString()
 
-        return DriverManager.getConnection(url1, user, password)
+        return DriverManager.getConnection(url2, user, password)
     }
 }
 
