@@ -22,7 +22,8 @@ fun Application.configureDatabases() {
     val url2 = "jdbc:postgresql://192.168.0.100:5432/justdatedb_1"
     val url3 = "jdbc:postgresql://localhost:5432/justdatedb_1"
 
-    Database.connect(url2,
+    Database.connect(
+        url3,
         driver = "org.postgresql.Driver",
         user = "osmilijey",
         password = "16710985") // local
