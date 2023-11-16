@@ -74,6 +74,7 @@ class NewImagesController() {
     }
 
     fun getAllIdImagesForCard(cardID: String): List<ImageResponse>? {
+        println("NewImagesControlller getAllIdImagesForCard(cardID: String) START")
         var imageDTO = ImageModel.fetchAllForCard(UUID.fromString(cardID))
         var imageIDs: List<ImageResponse>? = emptyList()
         if (imageDTO != null) {
@@ -85,6 +86,7 @@ class NewImagesController() {
                 createdAt = it.createdAt.toString()
             )}
         }
+        println("NewImagesControlller getAllIdImagesForCard(cardID: String) imageIDs - ${imageIDs!!.count()}")
         return imageIDs
     }
 

@@ -61,6 +61,8 @@ object ImageModel: Table("image") {
     }
 
     fun fetchAllForCard(cardID: UUID): List<ImageDTO>? {
+        println("ImageModel fetchAllForCard(cardID: UUID) START")
+
         return try {
             transaction {
                 val imageModel = ImageModel.select { ImageModel.cardID.eq(cardID) }

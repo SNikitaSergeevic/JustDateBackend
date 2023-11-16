@@ -20,11 +20,11 @@ class RefreshTokenController(private val email: String, private val ownerID: UUI
     }
 
     fun deleteRefreshToken() {
-        TokenModel.deleteToken(ownerID)
+        RefreshTokenModel.deleteToken(ownerID)
     }
 
     fun checkRefreshToken(): Boolean {
-        val tok = TokenModel.fetchToken(ownerID)
+        val tok = RefreshTokenModel.fetch(ownerID)
         return (tok != null)
     }
 

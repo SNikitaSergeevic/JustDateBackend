@@ -26,7 +26,7 @@ class RefreshTokenDTO(val id: UUID,
 object RefreshTokenModel: Table("refresh_token") {
     private val id: Column<UUID> = RefreshTokenModel.uuid("id")
     private val ownerID: Column<UUID> = RefreshTokenModel.uuid("owner_id")
-    private val token: Column<String> = RefreshTokenModel.varchar("refresh_token", 255)
+    private val token: Column<String> = RefreshTokenModel.varchar("token", 255)
     private val createdAt: Column<LocalDate> = RefreshTokenModel.date("created_at")
 
     fun create(refreshToken: RefreshTokenDTO) {

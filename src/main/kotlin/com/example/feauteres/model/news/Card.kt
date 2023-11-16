@@ -65,13 +65,19 @@ object CardModel: Table("card") {
     }
 
     fun fetch(id: String): CardDTO? {
+        println("CardModel fetch(id: String) START")
         return try {
-            val cardModel = CardModel.select { CardModel.id.eq(UUID.fromString(id)) }.single()
-            CardDTO(id = cardModel[CardModel.id], name = cardModel[name],
-                description = cardModel[description], location = cardModel[location],
-                age = cardModel[age], sex = cardModel[sex],
-                createdAt = cardModel[createdAt], lastAuth = cardModel[lastAuth])
+            transaction {
+                val cardModel = CardModel.select { CardModel.id.eq(UUID.fromString(id)) }.single()
+                CardDTO(
+                    id = cardModel[CardModel.id], name = cardModel[name],
+                    description = cardModel[description], location = cardModel[location],
+                    age = cardModel[age], sex = cardModel[sex],
+                    createdAt = cardModel[createdAt], lastAuth = cardModel[lastAuth]
+                )
+            }
         } catch (e: Exception) {
+            println("CardModel fetch(id: String) Exception: ${e}")
             null
         }
     }

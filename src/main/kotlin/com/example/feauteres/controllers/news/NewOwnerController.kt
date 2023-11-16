@@ -158,6 +158,8 @@ class NewOwnerController(private val call: ApplicationCall) {
         val loginReceiveRemote = call.receive<NewOwnerLoginReceiveRemote>()
         val ownerDTO = NewOwnerModel.fetch(email = loginReceiveRemote.email)
 
+        println("NewOwnerController loginOwner() ${ownerDTO!!.email} ")
+
         return if (ownerDTO != null && ownerDTO.password == loginReceiveRemote.password) {
             val card = CardModel.fetch(ownerDTO.cardID.toString())
             if (card != null) {
@@ -174,6 +176,7 @@ class NewOwnerController(private val call: ApplicationCall) {
                     card.age,
                     card.sex)
             } else {
+                println("NewOwnerController loginOwner() card is null - ${card == null} ")
                 null
             }
         } else {

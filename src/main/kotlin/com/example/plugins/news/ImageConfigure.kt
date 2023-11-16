@@ -18,7 +18,7 @@ fun Application.imageConfigure() {
 
     routing {
         authenticate("auth-jwt") {
-            get(Endpoint.GetImage.str) {
+            get(Endpoint.GetImages.str) {
                 val imageID = call.parameters["imageId"]!!
                 val file = NewImagesController().getImages(imageID)
 
@@ -41,7 +41,7 @@ fun Application.imageConfigure() {
             }
 
             get(Endpoint.GetImagesIdWithUserspublicid.str) {
-                val cardID = call.parameters["userspublicid"]!!
+                val cardID = call.parameters["cardID"]!!
                 val imageIDs = NewImagesController().getAllIdImagesForCard(cardID)
 
                 if (imageIDs != null) {
