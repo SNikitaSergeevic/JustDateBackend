@@ -85,6 +85,13 @@ data class NewTagsReceiveRemote (
     val cardID: String
 )
 
+@Serializable
+data class TagRemoteResponse (
+    val tagID: String,
+    val tagName: String,
+    val tagsID: String,
+    val cardID: String,
+)
 
 class NewTagsDTO (
     val id: UUID,

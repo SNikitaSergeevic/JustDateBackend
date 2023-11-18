@@ -19,6 +19,7 @@ data class UpdateNewOwnerRemote(val id: String,
                                 val description: String,
                                 val age: Int,
                                 val sex: String)
+// val togs: List<Tags>
 
 @Serializable
 data class NewOwnerAuthResponse(val id: String,
@@ -30,6 +31,7 @@ data class NewOwnerAuthResponse(val id: String,
                                 val location: String,
                                 val age: Int,
                                 val sex: String)
+//val togs: List<Tags>
 
 @Serializable
 data class NewOwnerAuthReceiveRemote(val ownerID: String,

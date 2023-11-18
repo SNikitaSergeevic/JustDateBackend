@@ -38,7 +38,7 @@ class TagController() {
         }
     }
 
-    fun createTagsForCard(tags: List<NewTagsReceiveRemote>): List<NewTags>? {
+    fun createTagsForCard(tags: List<NewTagsReceiveRemote>): List<NewTags> {
         val tagsReturn: MutableList<NewTags> = arrayListOf()
         setTagsForCard( tags.map {
             val tag = createTag(it.tagName)
@@ -51,6 +51,20 @@ class TagController() {
             ) }
         )
         return tagsReturn
+    }
+
+    fun fetchCardTags(cardID: UUID): List<TagRemoteResponse>? {
+        val tags = NewTagsModel.fetchAllTags(cardID) ?: return null
+        val allTagCard = tags.map {
+            val tag = TagModel.fetch(it.tagID) ?: return null
+             TagRemoteResponse(
+                tagID = tag.id.toString(),
+                tagName = tag.tagName,
+                tagsID = it.id.toString(),
+                cardID = it.cardID.toString()
+            )
+        }
+        return allTagCard
     }
 
     fun removeTagsForCard(tags: List<NewTagsDTO>) {

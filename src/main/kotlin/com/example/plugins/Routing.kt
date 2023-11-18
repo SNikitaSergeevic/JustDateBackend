@@ -107,5 +107,8 @@ enum class Endpoint(val str: String) {
     GetImage("/auth/getImage/{userspublicid}/{imageid}"),
     GetImagesIdWithUserspublicid("/auth/getImagesId/{cardID}"),
     FetchOwner("/auth/fetchOwner"),
-    FetchUserpublicOnSex("/auth/fetchUserpublicOnSex")
+    FetchUserpublicOnSex("/auth/fetchUserpublicOnSex"),
+    FetchCardsTags("/auth/fetchCardsTags/{cardID}"),
+    SetNewCardTags("/auth/setNewCardTags"),
+    SetExistCardTags("/auth/setExistCardTags")
 }
