@@ -28,7 +28,7 @@ fun Application.configureRouting() {
     ownerConfigure()
     imageConfigure()
     matchConfigure()
-    tagConfiguration()
+//    tagConfiguration()
 
 
 
