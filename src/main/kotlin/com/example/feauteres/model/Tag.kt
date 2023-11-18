@@ -1,4 +1,4 @@
-package com.example.feauteres.model.news
+package com.example.feauteres.model
 
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.*
@@ -36,10 +36,10 @@ object TagModel: Table("tag") {
         println("TagModel fetch(id: UUID): TagDTO? START")
         return try {
             transaction {
-                val tagModel = TagModel.select{TagModel.id.eq(id)}.single()
+                val tagModel = TagModel.select{ TagModel.id.eq(id)}.single()
                 TagDTO (
                     id = tagModel[TagModel.id],
-                    tagName = tagModel[TagModel.tagName]
+                    tagName = tagModel[tagName]
                 )
             }
         } catch (e: Exception) {
@@ -50,10 +50,10 @@ object TagModel: Table("tag") {
     fun fetchWithName(name: String): TagDTO? {
         return try {
             transaction {
-                val tagModel = TagModel.select(TagModel.tagName.eq(name)).single()
+                val tagModel = TagModel.select(tagName.eq(name)).single()
                 TagDTO (
                     id = tagModel[TagModel.id],
-                    tagName = tagModel[TagModel.tagName]
+                    tagName = tagModel[tagName]
                 )
             }
         } catch (e: Exception) {
@@ -73,13 +73,13 @@ object TagModel: Table("tag") {
 //TODO: TagsModel
 
 @Serializable
-data class NewTagsSetReceiveRemote (
+data class TagsSetReceiveRemote (
     val cardID: String,
     val tagID: String
 )
 
 @Serializable
-data class NewTagsCreateReceiveRemote (
+data class TagsCreateReceiveRemote (
     val tagName: String,
     val cardID: String
 )
@@ -92,21 +92,21 @@ data class TagRemoteResponse (
     val cardID: String,
 )
 
-class NewTagsDTO (
+class TagsDTO (
     val id: UUID,
     val cardID: UUID,
     val tagID: UUID
 )
 
-object NewTagsModel: Table("tags") {
-    private val id: Column<UUID> = NewTagsModel.uuid("id")
-    private val cardID: Column<UUID> = NewTagsModel.uuid("card_id")
-    private val tagID: Column<UUID> = NewTagsModel.uuid("tag_id")
+object TagsModel: Table("tags") {
+    private val id: Column<UUID> = TagsModel.uuid("id")
+    private val cardID: Column<UUID> = TagsModel.uuid("card_id")
+    private val tagID: Column<UUID> = TagsModel.uuid("tag_id")
 
-    fun create(tagsDTO: NewTagsDTO) {
+    fun create(tagsDTO: TagsDTO) {
         println("TagModel create(id: UUID, cardID: UUID, tagID: UUID) START")
         transaction {
-            NewTagsModel.insert {
+            TagsModel.insert {
                 it[id] = tagsDTO.id
                 it[cardID] = tagsDTO.cardID
                 it[tagID] = tagsDTO.tagID
@@ -114,16 +114,16 @@ object NewTagsModel: Table("tags") {
         }
     }
 
-    fun fetchAllTags(cardID: UUID): List<NewTagsDTO>? {
+    fun fetchAllTags(cardID: UUID): List<TagsDTO>? {
         println("TagModel fetchAllTags(cardID: UUID) START")
         return try {
             transaction {
-                val tagsModel = NewTagsModel.select {NewTagsModel.cardID.eq(cardID)}
+                val tagsModel = TagsModel.select { TagsModel.cardID.eq(cardID)}
                 tagsModel.map {
-                    NewTagsDTO(
-                        id = it[NewTagsModel.id],
-                        cardID = it[NewTagsModel.cardID],
-                        tagID = it[NewTagsModel.tagID]
+                    TagsDTO(
+                        id = it[TagsModel.id],
+                        cardID = it[TagsModel.cardID],
+                        tagID = it[tagID]
                     )
                 }
             }
@@ -132,10 +132,10 @@ object NewTagsModel: Table("tags") {
         }
     }
 
-    fun delete(tagsDTO: NewTagsDTO) {
+    fun delete(tagsDTO: TagsDTO) {
         println("TagModel delete(tagsDTO: NewTagsDTO) START")
         transaction {
-            NewTagsModel.deleteWhere { NewTagsModel.id.eq(tagsDTO.id) }
+            TagsModel.deleteWhere { id.eq(tagsDTO.id) }
         }
     }
 

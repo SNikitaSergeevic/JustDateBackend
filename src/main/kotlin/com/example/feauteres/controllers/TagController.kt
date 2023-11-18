@@ -1,7 +1,6 @@
-package com.example.feauteres.controllers.news
+package com.example.feauteres.controllers
 
-import com.example.feauteres.model.news.*
-import io.ktor.http.content.*
+import com.example.feauteres.model.*
 import java.util.*
 
 
@@ -22,20 +21,20 @@ class TagController() {
         }
     }
 
-    fun setTagsForCard(tags: List<NewTagsDTO>) {
+    fun setTagsForCard(tags: List<TagsDTO>) {
         println("TagController setTagsForCard(tags: List<NewTagsDTO>) START")
         tags.map {
-            NewTagsModel.create(it)
+            TagsModel.create(it)
         }
     }
 
-    fun createTagsForCard(tags: List<NewTagsCreateReceiveRemote>): List<NewTagsSetReceiveRemote> {
-        val tagsReturn: MutableList<NewTagsSetReceiveRemote> = arrayListOf()
+    fun createTagsForCard(tags: List<TagsCreateReceiveRemote>): List<TagsSetReceiveRemote> {
+        val tagsReturn: MutableList<TagsSetReceiveRemote> = arrayListOf()
         setTagsForCard( tags.map {
             val tag = createTag(it.tagName)
             val tagsID = UUID.randomUUID()
-            tagsReturn.add(NewTagsSetReceiveRemote(cardID = it.cardID, tagID = tag.id))
-            NewTagsDTO(
+            tagsReturn.add(TagsSetReceiveRemote(cardID = it.cardID, tagID = tag.id))
+            TagsDTO(
                 id = tagsID,
                 cardID = UUID.fromString(it.cardID),
                 tagID = UUID.fromString(tag.id)
@@ -45,7 +44,7 @@ class TagController() {
     }
 
     fun fetchCardTags(cardID: UUID): List<TagRemoteResponse>? {
-        val tags = NewTagsModel.fetchAllTags(cardID) ?: return null
+        val tags = TagsModel.fetchAllTags(cardID) ?: return null
         val allTagCard = tags.map {
             val tag = TagModel.fetch(it.tagID) ?: return null
              TagRemoteResponse(
@@ -58,14 +57,14 @@ class TagController() {
         return allTagCard
     }
 
-    fun removeTagsForCard(tags: List<NewTagsDTO>) {
+    fun removeTagsForCard(tags: List<TagsDTO>) {
         tags.map {
-            NewTagsModel.delete(it)
+            TagsModel.delete(it)
         }
     }
 
-    fun getAllTagsForCard(cardID: UUID): List<NewTagsDTO>? {
-        return NewTagsModel.fetchAllTags(cardID)
+    fun getAllTagsForCard(cardID: UUID): List<TagsDTO>? {
+        return TagsModel.fetchAllTags(cardID)
     }
 
 

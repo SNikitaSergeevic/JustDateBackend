@@ -1,6 +1,6 @@
 package com.example.plugins.news
 
-import com.example.feauteres.controllers.news.CardController
+import com.example.feauteres.controllers.CardController
 import com.example.plugins.Endpoint
 import io.ktor.http.*
 import io.ktor.server.application.*

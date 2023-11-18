@@ -1,4 +1,4 @@
-package com.example.feauteres.model.news
+package com.example.feauteres.model
 
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.*
@@ -12,6 +12,8 @@ import java.time.LocalDate
 
 @Serializable
 data class FetchCardSexReceiveRemote(val sex: String)
+
+
 
 @Serializable
 data class CardRemote(

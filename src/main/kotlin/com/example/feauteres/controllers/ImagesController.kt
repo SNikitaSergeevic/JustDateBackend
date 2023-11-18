@@ -1,37 +1,34 @@
 package com.example.feauteres.controllers
 
-import com.example.feauteres.model.ImagesDTO
-import com.example.feauteres.model.ImagesModel
-import com.example.feauteres.model.ImagesResponse
-import com.example.feauteres.model.UserspublicDTO
-import com.example.feauteres.model.UserspublicModel
+import com.example.feauteres.model.*
 import io.ktor.http.content.*
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.time.LocalDate
 import java.util.*
+
 
 
 class ImagesController() {
 
-   suspend fun setImage(multipart: MultiPartData) {
-       var text = ""
-       var fileName = ""
-       var userpublic: UserspublicDTO? = null
+    suspend fun setImage(multipart: MultiPartData) {
+        var text = ""
+        var fileName = ""
+        var card: CardDTO? = null
 
-        multipart.forEachPart {  part ->
-
+        multipart.forEachPart { part ->
             when(part) {
-
                 is PartData.FormItem -> {
                     text = part.value
-                    userpublic = UserspublicModel.fetch(text)
+                    card = CardModel.fetch(text)
                 }
 
                 is PartData.FileItem -> {
-                    if (userpublic != null) {
+                    if (card != null) {
                         val fileExtension = part.originalFileName?.takeLastWhile { it != '.' }
                         fileName = UUID.randomUUID().toString()
+
 
                         val folder = File("src/main/resources/static/users/$text")
                         folder.mkdir()
@@ -44,84 +41,104 @@ class ImagesController() {
                             }
                         }
 
-                        val imagesDTO = ImagesDTO(id = UUID.fromString(fileName),
-                                                path = "src/main/resources/static/users/$text",
-                                                userid = userpublic!!.id,
-                                                filename = "${fileName + "." + fileExtension}")
-                        ImagesModel.insert(imagesDTO)
-                        
+                        val imageDTO = ImageDTO(
+                            id = UUID.fromString(fileName),
+                            path = "src/main/resources/static/users/$text",
+                            cardID = card!!.id,
+                            fileName = "${fileName + "." + fileExtension}",
+                            createdAt = LocalDate.now()
+                        )
+                        ImageModel.create(imageDTO)
+
+
                     } else {
-                        println("Userpublic this id NOT FOUND")
+                        println("Card this id NOT FOUND")
                     }
                 }
-
-                is PartData.BinaryItem -> Unit
-
+                is PartData.BinaryItem -> UInt
                 is PartData.BinaryChannelItem -> TODO()
             }
             part.dispose()
         }
     }
 
-    fun getImage(userspublicid: String, imageid: String): File? {
-        val fileName = "/home/osmilijey/usr/projects/JustDateBackend/src/main/resources/static/users/$userspublicid/$imageid" + ".jpg"
+    fun getImage(cardID: String, imageID: String): File? {
+        val fileName = "/home/osmilijey/usr/projects/JustDateBackend/src/main/resources/static/users/$cardID/$imageID" + ".jpg"
         val file = File(fileName)
-        println(fileName)
         return file
     }
 
-    fun getIdAllImagesOfUser(userpublicid: String): List<ImagesResponse>? {
-        var imagesDTO = ImagesModel.fetchWithUserspublicid(UUID.fromString(userpublicid))
-        var imagesIds: List<ImagesResponse>? = emptyList()
-        if (imagesDTO != null) {
-            imagesIds = imagesDTO.map {ImagesResponse(id = it.id.toString(), path = it.path, userid = it.userid.toString(), filename = it.filename)}
+    fun getAllIdImagesForCard(cardID: String): List<ImageResponse>? {
+        println("NewImagesControlller getAllIdImagesForCard(cardID: String) START")
+        var imageDTO = ImageModel.fetchAllForCard(UUID.fromString(cardID))
+        var imageIDs: List<ImageResponse>? = emptyList()
+        if (imageDTO != null) {
+            imageIDs = imageDTO.map {
+                ImageResponse(
+                id = it.id.toString(),
+                path = it.path,
+                cardID = it.cardID.toString(),
+                fileName = it.fileName,
+                createdAt = it.createdAt.toString()
+            )
+            }
         }
-
-        return imagesIds
+        println("NewImagesControlller getAllIdImagesForCard(cardID: String) imageIDs - ${imageIDs!!.count()}")
+        return imageIDs
     }
 
-    fun getImages(id: String): MutableList<File>? { // OLD: get all images with userpublicid
-//        val image = ImagesModel.fetch(UUID.fromString(id))
-
-//        return if (image != null) {
-//            val fileName = image.filename
-//            val file = File("src/main/resources/static/users/${image.userid}/$fileName")
-//            return if (file.exists()) {
-//                file
-//            } else {
-//                println("File not exist")
-//                null
-//            }
-//        } else {
-//            println("User this id not exist")
-//            null
-//        }
-//        return if (image != null) {
-            val projectDirAbsolutePath = Paths.get("").toAbsolutePath().toString()
-            val imagesList: MutableList<File> = mutableListOf<File>()
-            val resPath = Paths.get("/home/osmilijey/usr/projects/JustDateBackend/src/main/resources/static/users/$id/")
-            val paths = Files.walk(resPath)
-//                .filter {item -> Files.isRegularFile(item)}
-//                .filter {item -> item.toString().endsWith(".txt")}
-                .forEach {item ->
-                    val file = File("/home/osmilijey/usr/projects/JustDateBackend/src/main/resources/static/users/$id/${item.fileName}")
-
-                    if (file.exists()) {
-                        imagesList.add(file)
-                    } else {
-                        println("AAAAAAAAAAAA else  ${item.fileName}")
-                    }
+    fun getImages(id: String): MutableList<File>? {
+        val imagesList: MutableList<File> = mutableListOf<File>()
+        val resPath = Paths.get("/home/osmilijey/usr/projects/JustDateBackend/src/main/resources/static/users/$id/")
+        Files.walk(resPath)
+            .forEach {item ->
+                val file = File("/home/osmilijey/usr/projects/JustDateBackend/src/main/resources/static/users/$id/${item.fileName}")
+                if (file.exists()) {
+                    imagesList.add(file)
                 }
-            println("AAAAAAAAAAAB $imagesList")
-
-            return imagesList
-//        } else {
-//            println("AAAAAAAAAAAA null")
-//            null
-//        }
-
-
+            }
+        return imagesList
     }
+
+
+
+
+    
+
+
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

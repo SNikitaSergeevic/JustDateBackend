@@ -1,4 +1,4 @@
-package com.example.feauteres.model.news
+package com.example.feauteres.model
 
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.*
@@ -49,10 +49,10 @@ object ImageModel: Table("image") {
                 val imageModel = ImageModel.select { ImageModel.id.eq(imageID) }.single()
                 ImageDTO(
                     id = imageModel[ImageModel.id],
-                    path = imageModel[ImageModel.path],
-                    cardID = imageModel[ImageModel.cardID],
-                    fileName = imageModel[ImageModel.fileName],
-                    createdAt = imageModel[ImageModel.createdAt]
+                    path = imageModel[path],
+                    cardID = imageModel[cardID],
+                    fileName = imageModel[fileName],
+                    createdAt = imageModel[createdAt]
                 )
             }
         } catch (e: Exception) {
@@ -66,12 +66,13 @@ object ImageModel: Table("image") {
         return try {
             transaction {
                 val imageModel = ImageModel.select { ImageModel.cardID.eq(cardID) }
-                imageModel.map {ImageDTO(
+                imageModel.map {
+                    ImageDTO(
                     id = it[ImageModel.id],
-                    path = it[ImageModel.path],
+                    path = it[path],
                     cardID = it[ImageModel.cardID],
-                    fileName = it[ImageModel.fileName],
-                    createdAt = it[ImageModel.createdAt]
+                    fileName = it[fileName],
+                    createdAt = it[createdAt]
                 ) }
             }
         } catch (e: Exception) {
@@ -82,7 +83,7 @@ object ImageModel: Table("image") {
     fun update(imageDTO: ImageDTO) {
         try {
             transaction {
-                ImageModel.update({ImageModel.id eq imageDTO.id}) {
+                ImageModel.update({ ImageModel.id eq imageDTO.id}) {
                     it[path] = imageDTO.path
                     it[fileName] = imageDTO.fileName
                 }
@@ -95,7 +96,7 @@ object ImageModel: Table("image") {
     fun delete(id: UUID) {
         try {
             transaction {
-                ImageModel.deleteWhere {ImageModel.id eq id}
+                ImageModel.deleteWhere { ImageModel.id eq id}
             }
         } catch (e: Exception) {
             println(e)

@@ -1,131 +1,167 @@
 package com.example.feauteres.model
 
-
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.javatime.date
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDate
-import java.util.UUID
+import java.util.*
+
 
 @Serializable
-data class OwnerAuthResponse (val ownerid: String,
-                              val userpulicid: String,
-                              var refreshToken: String,
-                              val name: String,
-                              val description: String,
-                              val location: String,
-                              val age: Int,
-                              val sex: String,
-                              var accessToken: String)
+data class UpdateOwnerRemote(val id: String,
+                             val email: String,
+                             val password: String,
+                             val location: String,
+                             val cardID: String,
+                             val name: String,
+                             val description: String,
+                             val age: Int,
+                             val sex: String)
+// val togs: List<Tags>
 
-class OwnerDTO (val id: UUID,
-                val email: String,
-                val password: String,
-                val location: String,
-                val userpublicid: UUID)
+@Serializable
+data class OwnerAuthResponse(val id: String,
+                             val cardID: String,
+                             val refreshToken: String,
+                             var accessToken: String,
+                             val name: String,
+                             val description: String,
+                             val location: String,
+                             val age: Int,
+                             val sex: String)
+//val togs: List<Tags>
 
-object OwnerModel: Table("justdate_schema.owner") {
-    private val id = OwnerModel.uuid("id")
-    private val email = OwnerModel.varchar("email", 255)
-    private val password = OwnerModel.varchar("password", 255)
-    private val location = OwnerModel.varchar("location", 255)
-    private val userpublicid = OwnerModel.uuid("userpublicid")
+@Serializable
+data class OwnerAuthReceiveRemote(val ownerID: String,
+                                  val refreshToken: String)
 
-    fun insert(ownerDTO: OwnerDTO) {
+@Serializable
+data class OwnerLoginReceiveRemote(val email: String,
+                                   val password: String)
+
+@Serializable
+data class FetchOwnerRespond(val id: String,
+                             val email: String,
+                             val password: String,
+                             val location: String,
+                             val cardID: String,
+                             val refreshToken: String)
+
+@Serializable
+data class DeleteOwnerRemote(val id: String,
+                             val cardID: String)
+
+@Serializable
+data class FetchOwnerRemote(val id: String)
+
+@Serializable
+data class OwnerRegisterReceiveRemote(val email: String,
+                                      val password: String,
+                                      val name: String,
+                                      val location: String,
+                                      val description: String,
+                                      val age: Int,
+                                      val sex: String)
+
+@Serializable
+data class OwnerRegisterResponseRemote(val ownerID: String,
+                                       val cardID: String,
+                                       val refreshToken: String)
+
+class OwnerDTO(val id: UUID,
+               val email: String,
+               val password: String,
+               val location: String,
+               val cardID: UUID,
+               val createdAt: LocalDate
+)
+
+object OwnerModel: Table("owner") {
+    private val id: Column<UUID> = OwnerModel.uuid("id")
+    private val email: Column<String> = OwnerModel.varchar("email", 255)
+    private val password: Column<String> = OwnerModel.varchar("password", 255)
+    private val location: Column<String> = OwnerModel.varchar("location", 255)
+    private val cardID: Column<UUID> = OwnerModel.uuid("card_id")
+    private val createdAt: Column<LocalDate> = OwnerModel.date("created_at")
+
+    fun create(owner: OwnerDTO) {
         transaction {
             OwnerModel.insert {
-                it[id] = ownerDTO.id
-                it[email] = ownerDTO.email
-                it[password] = ownerDTO.password
-                it[location] = ownerDTO.location
-                it[userpublicid] = ownerDTO.userpublicid
+                it[id] = owner.id
+                it[email] = owner.email
+                it[password] = owner.password
+                it[location] = owner.location
+                it[cardID] = owner.cardID
+                it[createdAt] = owner.createdAt
             }
         }
     }
 
-    //FIXME: generics this fetchOwners
     fun fetch(email: String): OwnerDTO? {
+        println("NewOwnerModel fetch(email: String) START")
         return try {
             transaction {
-                val ownerModel = OwnerModel.select { OwnerModel.email.eq(email) }.single()
-                OwnerDTO (id = ownerModel[OwnerModel.id],
+                val ownerModel = OwnerModel.select { OwnerModel.email.eq(email)}.single()
+                OwnerDTO(id = ownerModel[OwnerModel.id],
                     email = ownerModel[OwnerModel.email],
-                    password = ownerModel[OwnerModel.password],
-                    location = ownerModel[OwnerModel.location],
-                    userpublicid = ownerModel[OwnerModel.userpublicid])
+                    password = ownerModel[password],
+                    location = ownerModel[location],
+                    cardID = ownerModel[cardID],
+                    createdAt = ownerModel[createdAt])
             }
-        } catch (e: Exception){
+        } catch(e: Exception) {
             null
         }
     }
 
     fun fetch(id: UUID): OwnerDTO? {
+        println("NewOwnerModel fetch(id: UUID) START")
         return try {
             transaction {
-                val ownerModel = OwnerModel.select { OwnerModel.id.eq(id) }.single()
-                OwnerDTO(
-                    id = ownerModel[OwnerModel.id],
-                    email = ownerModel[OwnerModel.email],
-                    password = ownerModel[OwnerModel.password],
-                    location = ownerModel[OwnerModel.location],
-                    userpublicid = ownerModel[OwnerModel.userpublicid]
-                )
+                val ownerModel = OwnerModel.select { OwnerModel.id.eq(id)}.single()
+                OwnerDTO(id = ownerModel[OwnerModel.id],
+                    email = ownerModel[email],
+                    password = ownerModel[password],
+                    location = ownerModel[location],
+                    cardID = ownerModel[cardID],
+                    createdAt = ownerModel[createdAt])
             }
-        } catch (e: Exception) {
+        } catch(e: Exception) {
             null
         }
     }
 
-
-
     fun update(owner: OwnerDTO) {
-        println("updateOwner START")
+        println("NewOwnerModel update(owner: OwnerDTO)")
         try {
             transaction {
-                OwnerModel.update({OwnerModel.id eq owner.id}) {
+                OwnerModel.update({ OwnerModel.id eq owner.id}) {
                     it[id] = owner.id
                     it[email] = owner.email
                     it[password] = owner.password
                     it[location] = owner.location
-                    it[userpublicid] = owner.userpublicid
+                    it[cardID] = owner.cardID
+                    it[createdAt] = owner.createdAt
                 }
             }
         } catch (e: Exception) {
-            print(e)
+            println(e)
         }
+
     }
 
     fun delete(id: UUID) {
-        println("deleteOwner START")
+        println("NewOwnerModel delete(owner: OwnerDTO)")
         try {
-
             transaction {
-                OwnerModel.deleteWhere { OwnerModel.id eq id }
+                OwnerModel.deleteWhere { OwnerModel.id eq id}
             }
-
-        } catch (e: Exception) {
-
+        } catch(e: Exception) {
+            println(e)
         }
     }
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

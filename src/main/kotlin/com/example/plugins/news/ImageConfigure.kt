@@ -1,6 +1,6 @@
 package com.example.plugins.news
 
-import com.example.feauteres.controllers.news.NewImagesController
+import com.example.feauteres.controllers.ImagesController
 import com.example.plugins.Endpoint
 import io.ktor.http.*
 import io.ktor.server.routing.*
@@ -16,7 +16,7 @@ fun Application.imageConfigure() {
         authenticate("auth-jwt") {
             get(Endpoint.GetImages.str) {
                 val imageID = call.parameters["imageID"]!!
-                val file = NewImagesController().getImages(imageID)
+                val file = ImagesController().getImages(imageID)
 
                 if (file != null) {
                     var images = byteArrayOf()
@@ -32,13 +32,13 @@ fun Application.imageConfigure() {
             get(Endpoint.GetImage.str) {
                 val cardID = call.parameters["cardID"]!!
                 val imageID = call.parameters["imageID"]!!
-                val file = NewImagesController().getImage(cardID, imageID)
+                val file = ImagesController().getImage(cardID, imageID)
                 call.respondBytes(file!!.readBytes()!!)
             }
 
             get(Endpoint.GetImagesIdWithCardid.str) {
                 val cardID = call.parameters["cardID"]!!
-                val imageIDs = NewImagesController().getAllIdImagesForCard(cardID)
+                val imageIDs = ImagesController().getAllIdImagesForCard(cardID)
 
                 if (imageIDs != null) {
                     call.respond(imageIDs)
@@ -49,7 +49,7 @@ fun Application.imageConfigure() {
 
             post(Endpoint.SetImage.str) {
                 val multipart = call.receiveMultipart()
-                val imageController = NewImagesController()
+                val imageController = ImagesController()
                 imageController.setImage(multipart)
             }
 

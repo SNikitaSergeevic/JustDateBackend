@@ -3,7 +3,6 @@ package com.example.plugins.news
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.example.feauteres.controllers.*
-import com.example.feauteres.controllers.news.*
 import com.example.plugins.Endpoint
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -44,7 +43,7 @@ fun Application.ownerConfigure() {
 
     routing {
         post(Endpoint.Registration.str) {
-            val ownerController = NewOwnerController(call)
+            val ownerController = OwnerController(call)
             val regResponse = ownerController.registerOwner()
             if (regResponse != null) {
                 call.respond(HttpStatusCode.OK, "user success")
@@ -52,7 +51,7 @@ fun Application.ownerConfigure() {
         }
 
         post(Endpoint.Authorisation.str) {
-            val ownerController = NewOwnerController(call)
+            val ownerController = OwnerController(call)
             val authResponse = ownerController.authorisationOwnerWithRT()
 
             if (authResponse != null) {
@@ -71,7 +70,7 @@ fun Application.ownerConfigure() {
         }
 
         post(Endpoint.Login.str) {
-            val ownerController = NewOwnerController(call)
+            val ownerController = OwnerController(call)
             val ownerResponse = ownerController.loginOwner()
 
             if (ownerResponse != null) {
@@ -92,7 +91,7 @@ fun Application.ownerConfigure() {
 
         authenticate("auth-jwt") {
             post(Endpoint.FetchOwner.str) {
-                val ownerController = NewOwnerController(call)
+                val ownerController = OwnerController(call)
                 val owner = ownerController.fetchOwner()
 
                 if (owner != null) {
@@ -105,7 +104,7 @@ fun Application.ownerConfigure() {
 
             post(Endpoint.UpdateOwner.str) {
                 try {
-                    val ownerController = NewOwnerController(call)
+                    val ownerController = OwnerController(call)
                     ownerController.updateOwner()
                     call.respond(HttpStatusCode.OK, "Owner updated")
                 } catch (e: Exception) {
@@ -114,7 +113,7 @@ fun Application.ownerConfigure() {
             }
 
             post(Endpoint.DeleteOwner.str) {
-                val ownerController = NewOwnerController(call)
+                val ownerController = OwnerController(call)
                 ownerController.deleteOwner()
             }
 

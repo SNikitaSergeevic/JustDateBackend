@@ -1,8 +1,7 @@
-package com.example.feauteres.controllers.news
+package com.example.feauteres.controllers
 
-import com.example.feauteres.model.*
-import com.example.feauteres.model.news.RefreshTokenDTO
-import com.example.feauteres.model.news.RefreshTokenModel
+import com.example.feauteres.model.RefreshTokenDTO
+import com.example.feauteres.model.RefreshTokenModel
 import java.time.LocalDate
 import java.util.*
 import kotlin.random.Random

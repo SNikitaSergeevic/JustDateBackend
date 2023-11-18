@@ -1,4 +1,4 @@
-package com.example.feauteres.model.news
+package com.example.feauteres.model
 
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Table
