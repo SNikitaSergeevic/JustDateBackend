@@ -12,7 +12,7 @@ import io.ktor.server.routing.*
 fun Application.matchConfigure() {
     routing {
         authenticate("auth-jwt") {
-            post(Endpoint.FetchUserpublicOnSex.str) {
+            post(Endpoint.FetchCardsOnSex.str) {
                 try {
                     val cardController = CardController(call)
                     val cardResponse = cardController.fetchCardSex()

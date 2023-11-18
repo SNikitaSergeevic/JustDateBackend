@@ -1,11 +1,7 @@
 package com.example.plugins
 
 
-import com.example.feauteres.controllers.ImagesController
-import com.example.feauteres.controllers.OwnerRemoteController
-import com.example.feauteres.controllers.UserpublicController
 import com.example.plugins.news.*
-import io.ktor.http.*
 import io.ktor.server.routing.*
 import io.ktor.server.response.*
 import io.ktor.server.application.*
@@ -95,18 +91,21 @@ fun Application.configureRouting() {
 
 enum class Endpoint(val str: String) {
     Check("/check"),
+    //todo: owner
     Registration("/registration"),
     Authorisation("/authorisation"),
     Login("/login"),
     AuthCheck("/authCheck"),
     DeleteOwner("/auth/deleteOwner"),
     UpdateOwner("/auth/updateOwner"),
-    SetImage("/auth/setImage"),
-    GetImages("/auth/getImage/{imageId}"), 
-    GetImage("/auth/getImage/{userspublicid}/{imageid}"),
-    GetImagesIdWithUserspublicid("/auth/getImagesId/{cardID}"),
     FetchOwner("/auth/fetchOwner"),
-    FetchUserpublicOnSex("/auth/fetchUserpublicOnSex"),
+    //todo: image
+    SetImage("/auth/setImage"),
+    GetImages("/auth/getImage/{imageID}"),
+    GetImage("/auth/getImage/{cardID}/{imageID}"),
+    GetImagesIdWithCardid("/auth/getImagesId/{cardID}"),
+    //todo: cards and tags
+    FetchCardsOnSex("/auth/fetchCardsOnSex"),
     FetchCardsTags("/auth/fetchCardsTags/{cardID}"),
     SetNewCardTags("/auth/setNewCardTags"),
     SetExistCardTags("/auth/setExistCardTags")
