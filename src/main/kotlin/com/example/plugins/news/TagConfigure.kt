@@ -23,7 +23,7 @@ fun Application.tagConfiguration() {
     routing {
         authenticate {
             get(Endpoint.FetchCardsTags.str) {
-                val cardID = call.parameters["cardID"]
+                val cardID = call.parameters["cardID"]!!
                 val respondTags = TagController().fetchCardTags(UUID.fromString(cardID))
                 if (respondTags == null) {
                     call.respond(HttpStatusCode.Conflict, "responndTags == null")
