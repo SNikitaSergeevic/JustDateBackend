@@ -4,10 +4,7 @@ package com.example.plugins
 import com.example.feauteres.controllers.ImagesController
 import com.example.feauteres.controllers.OwnerRemoteController
 import com.example.feauteres.controllers.UserpublicController
-import com.example.plugins.news.imageConfigure
-import com.example.plugins.news.matchConfigure
-import com.example.plugins.news.ownerConfigure
-import com.example.plugins.news.tagConfiguration
+import com.example.plugins.news.*
 import io.ktor.http.*
 import io.ktor.server.routing.*
 import io.ktor.server.response.*
@@ -28,7 +25,7 @@ fun Application.configureRouting() {
     ownerConfigure()
     imageConfigure()
     matchConfigure()
-//    tagConfiguration()
+    tagConfigure()
 
 
 

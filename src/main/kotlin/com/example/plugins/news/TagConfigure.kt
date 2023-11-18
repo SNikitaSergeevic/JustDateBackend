@@ -19,9 +19,9 @@ import io.ktor.server.routing.*
 import java.util.*
 
 
-fun Application.tagConfiguration() {
+fun Application.tagConfigure() {
     routing {
-        authenticate {
+        authenticate("auth-jwt") {
             get(Endpoint.FetchCardsTags.str) {
                 val cardID = call.parameters["cardID"]!!
                 val respondTags = TagController().fetchCardTags(UUID.fromString(cardID))
