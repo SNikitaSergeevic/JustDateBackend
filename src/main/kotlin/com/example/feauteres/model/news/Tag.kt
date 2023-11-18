@@ -73,14 +73,13 @@ object TagModel: Table("tag") {
 //TODO: TagsModel
 
 @Serializable
-data class NewTags (
-    val id: String,
+data class NewTagsSetReceiveRemote (
     val cardID: String,
     val tagID: String
 )
 
 @Serializable
-data class NewTagsReceiveRemote (
+data class NewTagsCreateReceiveRemote (
     val tagName: String,
     val cardID: String
 )

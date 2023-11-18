@@ -1,13 +1,10 @@
 package com.example.plugins.news
 
-import com.auth0.jwt.JWT
-import com.auth0.jwt.algorithms.Algorithm
 import com.example.feauteres.controllers.*
 import com.example.feauteres.controllers.news.*
-import com.example.feauteres.model.news.NewTags
+import com.example.feauteres.model.news.NewTagsSetReceiveRemote
 import com.example.feauteres.model.news.NewTagsDTO
-import com.example.feauteres.model.news.NewTagsReceiveRemote
-import com.example.feauteres.model.news.TagRemoteResponse
+import com.example.feauteres.model.news.NewTagsCreateReceiveRemote
 import com.example.plugins.Endpoint
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -33,16 +30,16 @@ fun Application.tagConfigure() {
             }
 
             post(Endpoint.SetNewCardTags.str) {
-                val newTags = call.receive<List<NewTagsReceiveRemote>>()
+                val newTags = call.receive<List<NewTagsCreateReceiveRemote>>()
                 val createdTags = TagController().createTagsForCard(newTags)
                 call.respond(HttpStatusCode.Created, createdTags)
             }
 
             post(Endpoint.SetExistCardTags.str) {
-                val tags = call.receive<List<NewTags>>()
+                val tags = call.receive<List<NewTagsSetReceiveRemote>>()
                 TagController().setTagsForCard(tags.map {
                     NewTagsDTO(
-                        UUID.fromString(it.id),
+                        UUID.randomUUID(),
                         UUID.fromString(it.cardID),
                         UUID.fromString(it.tagID)
                     )

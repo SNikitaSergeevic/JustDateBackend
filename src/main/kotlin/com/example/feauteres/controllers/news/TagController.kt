@@ -1,16 +1,7 @@
 package com.example.feauteres.controllers.news
 
-import com.example.feauteres.model.ImagesDTO
-import com.example.feauteres.model.ImagesModel
-import com.example.feauteres.model.ImagesResponse
-import com.example.feauteres.model.UserspublicDTO
-import com.example.feauteres.model.UserspublicModel
 import com.example.feauteres.model.news.*
 import io.ktor.http.content.*
-import java.io.File
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.time.LocalDate
 import java.util.*
 
 
@@ -38,12 +29,12 @@ class TagController() {
         }
     }
 
-    fun createTagsForCard(tags: List<NewTagsReceiveRemote>): List<NewTags> {
-        val tagsReturn: MutableList<NewTags> = arrayListOf()
+    fun createTagsForCard(tags: List<NewTagsCreateReceiveRemote>): List<NewTagsSetReceiveRemote> {
+        val tagsReturn: MutableList<NewTagsSetReceiveRemote> = arrayListOf()
         setTagsForCard( tags.map {
             val tag = createTag(it.tagName)
             val tagsID = UUID.randomUUID()
-            tagsReturn.add(NewTags(id = tagsID.toString(), cardID = it.cardID, tagID = tag.id))
+            tagsReturn.add(NewTagsSetReceiveRemote(cardID = it.cardID, tagID = tag.id))
             NewTagsDTO(
                 id = tagsID,
                 cardID = UUID.fromString(it.cardID),
