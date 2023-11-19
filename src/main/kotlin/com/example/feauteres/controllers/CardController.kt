@@ -3,13 +3,14 @@ package com.example.feauteres.controllers
 import com.example.feauteres.model.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
+import java.util.*
 
 
 class CardController(private val call: ApplicationCall) {
-    suspend fun fetchCardSex(): CardResponse? {
+    suspend fun fetchCardSex(localCall: ApplicationCall): CardResponse? {
         print("CardController fetchCardSex() START")
 
-        val receive = call.receive<FetchCardSexReceiveRemote>()
+        val receive = localCall.receive<FetchCardSexReceiveRemote>()
         val cards = CardModel.fetchOnSex(receive.sex)
 
         if (cards != null) {
@@ -33,7 +34,18 @@ class CardController(private val call: ApplicationCall) {
 
     }
 
-
+//    suspend fun cardMatchCreate(localCall: ApplicationCall): MatchDTO? {
+//        print("CardController cardMatchCreate() START")
+//        val senderOwner = localCall.receive<MatchCreateReceiveRemote>()
+//        val existingMatch = MatchModel.fetchRecipiend(UUID.fromString(senderOwner.senderID))
+//
+//        if (existingMatch != null) {
+//            return existingMatch
+//        } else {
+//
+//        }
+//
+//    }
 
 
 }

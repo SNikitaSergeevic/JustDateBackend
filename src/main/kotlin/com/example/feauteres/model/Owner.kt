@@ -36,7 +36,7 @@ data class OwnerRegisterReceiveRemote(
 )
 
 @Serializable
-data class DeleteOwnerRemote(
+data class DeleteOwnerReceiveRemote(
     val id: String,
     val cardID: String
 )
@@ -148,6 +148,25 @@ object OwnerModel : Table("owner") {
                     password = ownerModel[password],
                     location = ownerModel[location],
                     cardID = ownerModel[cardID],
+                    createdAt = ownerModel[createdAt]
+                )
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    fun fetchOnCradid(cardID: UUID): OwnerDTO? {
+        println("NewOwnerModel fetchOnCradid(cardID: UUID) START")
+        return try {
+            transaction {
+                val ownerModel = OwnerModel.select { OwnerModel.cardID.eq(cardID) }.single()
+                OwnerDTO(
+                    id = ownerModel[OwnerModel.id],
+                    email = ownerModel[email],
+                    password = ownerModel[password],
+                    location = ownerModel[location],
+                    cardID = ownerModel[OwnerModel.cardID],
                     createdAt = ownerModel[createdAt]
                 )
             }

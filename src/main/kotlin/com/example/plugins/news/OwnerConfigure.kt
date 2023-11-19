@@ -43,7 +43,7 @@ fun Application.ownerConfigure() {
 
     routing {
         post(Endpoint.Registration.str) {
-            val ownerController = OwnerController(call)
+            val ownerController = OwnerController()
             val regResponse = ownerController.registerOwner(call)
             if (regResponse != null) {
                 call.respond(HttpStatusCode.OK, "user success")
@@ -51,7 +51,7 @@ fun Application.ownerConfigure() {
         }
 
         post(Endpoint.Authorisation.str) {
-            val ownerController = OwnerController(call)
+            val ownerController = OwnerController()
             val authResponse = ownerController.authorisationOwnerWithRT(call)
 
             if (authResponse != null) {
@@ -70,7 +70,7 @@ fun Application.ownerConfigure() {
         }
 
         post(Endpoint.Login.str) {
-            val ownerController = OwnerController(call)
+            val ownerController = OwnerController()
             val ownerResponse = ownerController.loginOwner(call)
 
             if (ownerResponse != null) {
@@ -91,7 +91,7 @@ fun Application.ownerConfigure() {
 
         authenticate("auth-jwt") {
             get(Endpoint.FetchPublicOwner.str) {
-                val ownerController = OwnerController(call)
+                val ownerController = OwnerController()
                 val owner = ownerController.fetchPublicOwner(call)
 
                 if (owner != null) {
@@ -108,7 +108,7 @@ fun Application.ownerConfigure() {
 
             post(Endpoint.UpdateOwner.str) {
                 try {
-                    val ownerController = OwnerController(call)
+                    val ownerController = OwnerController()
                     ownerController.updateOwner(call)
                     call.respond(HttpStatusCode.OK, "Owner updated")
                 } catch (e: Exception) {
@@ -117,7 +117,7 @@ fun Application.ownerConfigure() {
             }
 
             post(Endpoint.DeleteOwner.str) {
-                val ownerController = OwnerController(call)
+                val ownerController = OwnerController()
                 ownerController.deleteOwner(call)
             }
 

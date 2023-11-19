@@ -8,7 +8,7 @@ import io.ktor.server.response.*
 import java.time.LocalDate
 import java.util.*
 
-class OwnerController(private val call: ApplicationCall) {
+class OwnerController() {
 
     suspend fun updateOwner(localCall: ApplicationCall) {
         println("NewOwnerController updateOwner() START")
@@ -100,7 +100,7 @@ class OwnerController(private val call: ApplicationCall) {
         println("NewOwnerController deleteOwner() START")
 
         try {
-            val deleteRemote = localCall.receive<DeleteOwnerRemote>()
+            val deleteRemote = localCall.receive<DeleteOwnerReceiveRemote>()
             RefreshTokenModel.deleteToken(UUID.fromString(deleteRemote.id))
             OwnerModel.delete(UUID.fromString(deleteRemote.id))
             CardModel.delete(UUID.fromString(deleteRemote.cardID))
@@ -224,7 +224,7 @@ class OwnerController(private val call: ApplicationCall) {
                     card.age,
                     card.sex)
             } else {
-                println("NewOwnerController loginOwner() card is null - ${card == null} ")
+                println("NewOwnerController loginOwner() card is null")
                 null
             }
         } else {
