@@ -52,7 +52,7 @@ fun Application.ownerConfigure() {
 
         post(Endpoint.Authorisation.str) {
             val ownerController = OwnerController(call)
-            val authResponse = ownerController.authorisationOwnerWithRT()
+            val authResponse = ownerController.authorisationOwnerWithRT(call)
 
             if (authResponse != null) {
                 val token = JWT.create()
@@ -71,7 +71,7 @@ fun Application.ownerConfigure() {
 
         post(Endpoint.Login.str) {
             val ownerController = OwnerController(call)
-            val ownerResponse = ownerController.loginOwner()
+            val ownerResponse = ownerController.loginOwner(call)
 
             if (ownerResponse != null) {
                 val token = JWT.create()
@@ -90,9 +90,9 @@ fun Application.ownerConfigure() {
         }
 
         authenticate("auth-jwt") {
-            get(Endpoint.FetchOwner.str) {
+            get(Endpoint.FetchPublicOwner.str) {
                 val ownerController = OwnerController(call)
-                val owner = ownerController.fetchPublicOwner()
+                val owner = ownerController.fetchPublicOwner(call)
 
                 if (owner != null) {
                     call.respond(owner)
@@ -102,10 +102,14 @@ fun Application.ownerConfigure() {
 
             }
 
+            post(Endpoint.FetchPrivateOwner.str) {
+
+            }
+
             post(Endpoint.UpdateOwner.str) {
                 try {
                     val ownerController = OwnerController(call)
-                    ownerController.updateOwner()
+                    ownerController.updateOwner(call)
                     call.respond(HttpStatusCode.OK, "Owner updated")
                 } catch (e: Exception) {
                     call.respond(HttpStatusCode.Conflict)
@@ -114,7 +118,7 @@ fun Application.ownerConfigure() {
 
             post(Endpoint.DeleteOwner.str) {
                 val ownerController = OwnerController(call)
-                ownerController.deleteOwner()
+                ownerController.deleteOwner(call)
             }
 
         }

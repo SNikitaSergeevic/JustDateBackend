@@ -98,7 +98,8 @@ enum class Endpoint(val str: String) {
     AuthCheck("/authCheck"),
     DeleteOwner("/auth/deleteOwner"),
     UpdateOwner("/auth/updateOwner"),
-    FetchOwner("/auth/fetchOwner/{ownerID}"),
+    FetchPublicOwner("/auth/fetchPublicOwner/{ownerID}"),
+    FetchPrivateOwner("/auth/fetchPrivateOwner}"),
     //todo: image
     SetImage("/auth/setImage"),
     GetImages("/auth/getImage/{imageID}"),

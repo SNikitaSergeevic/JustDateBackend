@@ -10,10 +10,10 @@ import java.util.*
 
 class OwnerController(private val call: ApplicationCall) {
 
-    suspend fun updateOwner() {
+    suspend fun updateOwner(localCall: ApplicationCall) {
         println("NewOwnerController updateOwner() START")
 
-        var updateRemote = call.receive<UpdateOwnerReceiveRemote>()
+        var updateRemote = localCall.receive<UpdateOwnerReceiveRemote>()
 
 
         OwnerModel.update(
@@ -34,13 +34,13 @@ class OwnerController(private val call: ApplicationCall) {
             createdAt = LocalDate.now(),
             lastAuth = LocalDate.now())
         )
-        call.respond(HttpStatusCode.OK, "Owner updated")
+        localCall.respond(HttpStatusCode.OK, "Owner updated")
     }
 
-    suspend fun fetchPublicOwner(): PublicOwnerResponse? {
+    suspend fun fetchPublicOwner(localCall: ApplicationCall): PublicOwnerResponse? {
         println("NewOwnerController fetchPublicOwner() START")
 
-        val id = call.parameters["ownerID"]
+        val id = localCall.parameters["ownerID"]
         val ownerDTO = OwnerModel.fetch(UUID.fromString(id))
 
         return if (ownerDTO != null) {
@@ -64,10 +64,10 @@ class OwnerController(private val call: ApplicationCall) {
         }
     }
 
-    suspend fun fetchPrivateOwner(): PrivateOwnerResponse? {
+    suspend fun fetchPrivateOwner(localCall: ApplicationCall): PrivateOwnerResponse? {
         println("OwnerController fetchPrivateOwner() START")
 
-        val ownerReceive = call.receive<PrivateOwnerReceiveRemote>()
+        val ownerReceive = localCall.receive<PrivateOwnerReceiveRemote>()
         val owner = OwnerModel.fetch(UUID.fromString(ownerReceive.ownerID))
 
         return if (owner != null && ownerReceive.email == owner.email) {
@@ -96,15 +96,15 @@ class OwnerController(private val call: ApplicationCall) {
 
     }
 
-    suspend fun deleteOwner() {
+    suspend fun deleteOwner(localCall: ApplicationCall) {
         println("NewOwnerController deleteOwner() START")
 
         try {
-            val deleteRemote = call.receive<DeleteOwnerRemote>()
+            val deleteRemote = localCall.receive<DeleteOwnerRemote>()
             RefreshTokenModel.deleteToken(UUID.fromString(deleteRemote.id))
             OwnerModel.delete(UUID.fromString(deleteRemote.id))
             CardModel.delete(UUID.fromString(deleteRemote.cardID))
-            call.respond(HttpStatusCode.OK, "Owner deleted")
+            localCall.respond(HttpStatusCode.OK, "Owner deleted")
         } catch (e: Exception) {
 
         }
@@ -163,10 +163,10 @@ class OwnerController(private val call: ApplicationCall) {
     }
 
 
-    suspend fun authorisationOwnerWithRT(): PrivateOwnerResponse? {
+    suspend fun authorisationOwnerWithRT(localCall: ApplicationCall): PrivateOwnerResponse? {
         println("NewOwnerController authorisationOwnerWithRT() START")
 
-        val authCall = call.receive<OwnerAuthReceiveRemote>()
+        val authCall = localCall.receive<OwnerAuthReceiveRemote>()
         val refreshTokenDTO = RefreshTokenModel.fetch(UUID.fromString(authCall.ownerID))
 
         if (refreshTokenDTO != null) {
@@ -199,10 +199,10 @@ class OwnerController(private val call: ApplicationCall) {
         }
     }
 
-    suspend fun loginOwner(): PrivateOwnerResponse? {
+    suspend fun loginOwner(localCall: ApplicationCall): PrivateOwnerResponse? {
         println("NewOwnerController loginOwner() START")
 
-        val loginReceiveRemote = call.receive<OwnerLoginReceiveRemote>()
+        val loginReceiveRemote = localCall.receive<OwnerLoginReceiveRemote>()
         val ownerDTO = OwnerModel.fetch(email = loginReceiveRemote.email)
 
         println("NewOwnerController loginOwner() ${ownerDTO!!.email} ")
@@ -228,7 +228,7 @@ class OwnerController(private val call: ApplicationCall) {
                 null
             }
         } else {
-            call.respond(HttpStatusCode.Conflict, "Incorrect login or password")
+            localCall.respond(HttpStatusCode.Conflict, "Incorrect login or password")
             null
         }
     }
