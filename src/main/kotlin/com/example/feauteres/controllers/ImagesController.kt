@@ -21,7 +21,7 @@ class ImagesController() {
             when(part) {
                 is PartData.FormItem -> {
                     text = part.value
-                    card = CardModel.fetch(text)
+                    card = CardModel.fetch(UUID.fromString(text))
                 }
 
                 is PartData.FileItem -> {

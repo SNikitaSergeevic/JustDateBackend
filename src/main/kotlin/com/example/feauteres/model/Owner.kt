@@ -11,7 +11,7 @@ import java.util.*
 
 
 
-//TODO: Private owner RECEIVE
+//TODO: Owner RECEIVE
 @Serializable
 data class OwnerAuthReceiveRemote(
     val ownerID: String,
