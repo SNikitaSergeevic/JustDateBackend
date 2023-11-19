@@ -9,33 +9,7 @@ import java.time.LocalDate
 import java.util.*
 
 
-//TODO: Public owner RESPONSE
-@Serializable
-data class PublicOwnerResponse(
-    val id: String,
-    val cardID: String,
-    val email: String,
-    val location: String,
-    val name: String,
-    val description: String,
-    val age: Int,
-    val sex: String
-)
 
-//TODO: Private owner RESPONSE
-@Serializable
-data class PrivateOwnerResponse(
-    val id: String,
-    val cardID: String,
-    val refreshToken: String,
-    val accessToken: String,
-    val email: String,
-    val location: String,
-    val name: String,
-    val description: String,
-    val age: String,
-    val sex: String
-)
 
 //TODO: Private owner RECEIVE
 @Serializable
@@ -51,61 +25,6 @@ data class OwnerLoginReceiveRemote(
 )
 
 @Serializable
-data class DeleteOwnerRemote(
-    val id: String,
-    val cardID: String
-)
-
-
-
-
-
-
-
-@Serializable
-data class UpdateOwnerRemote(
-    val id: String,
-    val email: String,
-    val password: String,
-    val location: String,
-    val cardID: String,
-    val name: String,
-    val description: String,
-    val age: Int,
-    val sex: String
-)
-// val togs: List<Tags>
-
-@Serializable
-data class OwnerAuthResponse(
-    val id: String,
-    val cardID: String,
-    val refreshToken: String,
-    var accessToken: String,
-    val name: String,
-    val description: String,
-    val location: String,
-    val age: Int,
-    val sex: String
-)
-//val togs: List<Tags>
-
-
-@Serializable
-data class FetchOwnerRespond(
-    val id: String,
-    val email: String,
-    val password: String,
-    val location: String,
-    val cardID: String,
-    val refreshToken: String
-)
-
-
-@Serializable
-data class FetchOwnerRemote(val id: String)
-
-@Serializable
 data class OwnerRegisterReceiveRemote(
     val email: String,
     val password: String,
@@ -117,10 +36,56 @@ data class OwnerRegisterReceiveRemote(
 )
 
 @Serializable
-data class OwnerRegisterResponseRemote(
+data class DeleteOwnerRemote(
+    val id: String,
+    val cardID: String
+)
+
+@Serializable
+data class PrivateOwnerReceiveRemote(
     val ownerID: String,
+    val refreshToken: String,
+    val email: String,
+    val cardID: String
+)
+
+@Serializable
+data class UpdateOwnerReceiveRemote(
+    val id: String,
     val cardID: String,
-    val refreshToken: String
+    val email: String,
+    val location: String,
+    val name: String,
+    val description: String,
+    val age: Int,
+    val sex: String
+)
+
+//TODO: Public owner RESPONSE
+@Serializable
+data class PublicOwnerResponse(
+    val id: String,
+    val cardID: String,
+    val location: String,
+    val name: String,
+    val description: String,
+    val age: Int,
+    val sex: String
+)
+
+//TODO: Private owner RESPONSE
+@Serializable
+data class PrivateOwnerResponse(
+    val id: String,
+    val cardID: String,
+    val refreshToken: String,
+    var accessToken: String,
+    val email: String,
+    val location: String,
+    val name: String,
+    val description: String,
+    val age: Int,
+    val sex: String
 )
 
 class OwnerDTO(
@@ -198,10 +163,8 @@ object OwnerModel : Table("owner") {
                 OwnerModel.update({ OwnerModel.id eq owner.id }) {
                     it[id] = owner.id
                     it[email] = owner.email
-                    it[password] = owner.password
                     it[location] = owner.location
                     it[cardID] = owner.cardID
-                    it[createdAt] = owner.createdAt
                 }
             }
         } catch (e: Exception) {

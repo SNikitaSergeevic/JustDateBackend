@@ -66,11 +66,11 @@ object CardModel: Table("card") {
         }
     }
 
-    fun fetch(id: String): CardDTO? {
+    fun fetch(id: UUID): CardDTO? {
         println("CardModel fetch(id: String) START")
         return try {
             transaction {
-                val cardModel = CardModel.select { CardModel.id.eq(UUID.fromString(id)) }.single()
+                val cardModel = CardModel.select { CardModel.id.eq(id) }.single()
                 CardDTO(
                     id = cardModel[CardModel.id], name = cardModel[name],
                     description = cardModel[description], location = cardModel[location],
@@ -111,8 +111,6 @@ object CardModel: Table("card") {
                     it[location] = card.location
                     it[age] = card.age
                     it[sex] = card.sex
-//                    it[createdAt] = card.createdAt
-//                    it[lastAuth] = card.lastAuth
                 }
             }
         } catch(e: Exception) {

@@ -13,12 +13,13 @@ class OwnerController(private val call: ApplicationCall) {
     suspend fun updateOwner() {
         println("NewOwnerController updateOwner() START")
 
-        var updateRemote = call.receive<UpdateOwnerRemote>()
+        var updateRemote = call.receive<UpdateOwnerReceiveRemote>()
+
 
         OwnerModel.update(
             OwnerDTO(id = UUID.fromString(updateRemote.id, ),
             email = updateRemote.email,
-            password = updateRemote.password,
+            password = "",
             location = updateRemote.location,
             cardID = UUID.fromString(updateRemote.cardID),
             createdAt = LocalDate.now())
@@ -36,22 +37,24 @@ class OwnerController(private val call: ApplicationCall) {
         call.respond(HttpStatusCode.OK, "Owner updated")
     }
 
-    suspend fun fetchOwner(): FetchOwnerRespond? {
-        println("NewOwnerController fetchOwner() START")
+    suspend fun fetchPublicOwner(): PublicOwnerResponse? {
+        println("NewOwnerController fetchPublicOwner() START")
 
-        val id = call.receive<FetchOwnerRemote>().id
-        val owner = OwnerModel.fetch(UUID.fromString(id))
+        val id = call.parameters["ownerID"]
+        val ownerDTO = OwnerModel.fetch(UUID.fromString(id))
 
-        return if (owner != null) {
-            val token = RefreshTokenModel.fetch(owner.id)
-            return if (token != null) {
-                FetchOwnerRespond(
-                    id = owner.id.toString(),
-                    email = owner.email,
-                    location = owner.location,
-                    password = owner.password,
-                    cardID =  owner.cardID.toString(),
-                    refreshToken = token.token
+        return if (ownerDTO != null) {
+            val cardDTO = CardModel.fetch(ownerDTO.cardID)
+            val tokenDTO = RefreshTokenModel.fetch(ownerDTO.id)
+            return if (tokenDTO != null && cardDTO != null) {
+                PublicOwnerResponse(
+                    id = ownerDTO.id.toString(),
+                    cardID = cardDTO.id.toString(),
+                    location = ownerDTO.location,
+                    name = cardDTO.name,
+                    description = cardDTO.description,
+                    age = cardDTO.age,
+                    sex = cardDTO.sex
                 )
             } else {
                 null
@@ -59,6 +62,38 @@ class OwnerController(private val call: ApplicationCall) {
         } else {
             null
         }
+    }
+
+    suspend fun fetchPrivateOwner(): PrivateOwnerResponse? {
+        println("OwnerController fetchPrivateOwner() START")
+
+        val ownerReceive = call.receive<PrivateOwnerReceiveRemote>()
+        val owner = OwnerModel.fetch(UUID.fromString(ownerReceive.ownerID))
+
+        return if (owner != null && ownerReceive.email == owner.email) {
+            val token = RefreshTokenModel.fetch(owner.id)
+            val card = CardModel.fetch(owner.cardID)
+            if (token != null && token.token == ownerReceive.refreshToken && card != null) {
+                PrivateOwnerResponse(
+                    id = owner.id.toString(),
+                    cardID = card.id.toString(),
+                    refreshToken = token.token,
+                    accessToken = "",
+                    email = owner.email,
+                    location = owner.location,
+                    name = card.name,
+                    description = card.description,
+                    age = card.age,
+                    sex = card.sex
+
+                )
+            } else {
+                null
+            }
+        } else {
+            null
+        }
+
     }
 
     suspend fun deleteOwner() {
@@ -75,12 +110,12 @@ class OwnerController(private val call: ApplicationCall) {
         }
     }
 
-    suspend fun registerOwner(): OwnerRegisterResponseRemote? {
-        var register = call.receive<OwnerRegisterReceiveRemote>()
+    suspend fun registerOwner(localCall: ApplicationCall): PrivateOwnerResponse? {
+        var register = localCall.receive<OwnerRegisterReceiveRemote>()
         val ownerModel = OwnerModel.fetch(email = register.email)
 
         if (ownerModel != null) {
-            call.respond(HttpStatusCode.Conflict, "User already exist")
+            localCall.respond(HttpStatusCode.Conflict, "User already exist")
             return null
         } else {
             val idForOwner = UUID.randomUUID()
@@ -110,13 +145,25 @@ class OwnerController(private val call: ApplicationCall) {
             CardModel.create(cardDTO)
             OwnerModel.create(newOwnerDTO)
             val refreshToken = tokenController.createRefreshToken()
-            return OwnerRegisterResponseRemote(idForOwner.toString(), idForCard.toString(), refreshToken)
+
+            return PrivateOwnerResponse(
+                id = idForOwner.toString(),
+                cardID = idForCard.toString(),
+                refreshToken = refreshToken,
+                accessToken = "",
+                email = register.email,
+                location = register.location,
+                name = register.name,
+                description = register.description,
+                age = register.age,
+                sex = register.sex
+            )
         }
 
     }
 
 
-    suspend fun authorisationOwnerWithRT(): OwnerAuthResponse? {
+    suspend fun authorisationOwnerWithRT(): PrivateOwnerResponse? {
         println("NewOwnerController authorisationOwnerWithRT() START")
 
         val authCall = call.receive<OwnerAuthReceiveRemote>()
@@ -126,18 +173,19 @@ class OwnerController(private val call: ApplicationCall) {
             if (authCall.refreshToken.toInt() == refreshTokenDTO.token.toInt()) {
                 val ownerDTO = OwnerModel.fetch(UUID.fromString(authCall.ownerID))
                 if (ownerDTO != null) {
-                    val card = CardModel.fetch(ownerDTO.cardID.toString())
+                    val card = CardModel.fetch(ownerDTO.cardID)
                     if (card != null) {
                         val refreshTokenController = RefreshTokenController(ownerDTO!!.email, ownerDTO!!.id)
                         if (refreshTokenController.checkRefreshToken()) refreshTokenController.deleteRefreshToken() else return null
                         val refreshToken = refreshTokenController.createRefreshToken()
-                        return OwnerAuthResponse(ownerDTO.id.toString(),
+                        return PrivateOwnerResponse(ownerDTO.id.toString(),
                             card.id.toString(),
                             refreshToken,
                             "",
+                            ownerDTO.email,
+                            card.location,
                             card.name,
                             card.description,
-                            card.location,
                             card.age,
                             card.sex)
                     } else {
@@ -151,7 +199,7 @@ class OwnerController(private val call: ApplicationCall) {
         }
     }
 
-    suspend fun loginOwner(): OwnerAuthResponse? {
+    suspend fun loginOwner(): PrivateOwnerResponse? {
         println("NewOwnerController loginOwner() START")
 
         val loginReceiveRemote = call.receive<OwnerLoginReceiveRemote>()
@@ -160,18 +208,19 @@ class OwnerController(private val call: ApplicationCall) {
         println("NewOwnerController loginOwner() ${ownerDTO!!.email} ")
 
         return if (ownerDTO != null && ownerDTO.password == loginReceiveRemote.password) {
-            val card = CardModel.fetch(ownerDTO.cardID.toString())
+            val card = CardModel.fetch(ownerDTO.cardID)
             if (card != null) {
                 val tokenController = RefreshTokenController(loginReceiveRemote.email, ownerDTO.id)
                 tokenController.deleteRefreshToken()
                 val refreshToken = tokenController.createRefreshToken()
-                OwnerAuthResponse(ownerDTO.id.toString(),
+                PrivateOwnerResponse(ownerDTO.id.toString(),
                     ownerDTO.cardID.toString(),
                     refreshToken,
                     "",
+                    ownerDTO.email,
+                    card.location,
                     card.name,
                     card.description,
-                    card.location,
                     card.age,
                     card.sex)
             } else {

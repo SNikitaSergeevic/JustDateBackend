@@ -44,7 +44,7 @@ fun Application.ownerConfigure() {
     routing {
         post(Endpoint.Registration.str) {
             val ownerController = OwnerController(call)
-            val regResponse = ownerController.registerOwner()
+            val regResponse = ownerController.registerOwner(call)
             if (regResponse != null) {
                 call.respond(HttpStatusCode.OK, "user success")
             }
@@ -90,9 +90,9 @@ fun Application.ownerConfigure() {
         }
 
         authenticate("auth-jwt") {
-            post(Endpoint.FetchOwner.str) {
+            get(Endpoint.FetchOwner.str) {
                 val ownerController = OwnerController(call)
-                val owner = ownerController.fetchOwner()
+                val owner = ownerController.fetchPublicOwner()
 
                 if (owner != null) {
                     call.respond(owner)
