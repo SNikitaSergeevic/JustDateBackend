@@ -143,7 +143,7 @@ class MatchController() {
                     match = false,
                     createdAt = LocalDate.now(),
                     idSender = UUID.fromString(matchCreate.idSender),
-                    idRecipient = UUID.fromString(matchCreate.cardIdRecipient)
+                    idRecipient = recipient.id
                 )
                 MatchModel.create(newMatch)
                 MatchResponse(
