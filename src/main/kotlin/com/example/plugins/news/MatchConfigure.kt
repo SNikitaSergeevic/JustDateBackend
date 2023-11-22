@@ -54,7 +54,7 @@ fun Application.matchConfigure() {
                     } else {
                         call.respond(HttpStatusCode.NotFound)
                     }
-                    
+
                 } catch (e: Exception) {
                     call.respond(HttpStatusCode.Conflict, e)
                 }
@@ -125,7 +125,18 @@ fun Application.matchConfigure() {
                     val match = matchController.createMatch(newMatchReceiveRemote)
 
                     if (match != null) {
-                        call.respond(HttpStatusCode.Accepted, MatchResponse(
+//                        call.respond(HttpStatusCode.Accepted, MatchResponse(
+//                            id = match.id.toString(),
+//                            cardIdSender = match.cardIdSender.toString(),
+//                            cardIdRecipient = match.cardIdRecipient.toString(),
+//                            recipientShow = match.recipientShow,
+//                            senderShow = match.senderShow,
+//                            match = match.match,
+//                            createdAt = match.createdAt.toString(),
+//                            idSender = match.idSender.toString(),
+//                            idRecipient = match.idRecipient.toString()
+//                        ))
+                        call.respond(MatchResponse(
                             id = match.id.toString(),
                             cardIdSender = match.cardIdSender.toString(),
                             cardIdRecipient = match.cardIdRecipient.toString(),
