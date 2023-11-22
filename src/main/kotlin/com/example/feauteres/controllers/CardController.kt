@@ -84,7 +84,7 @@ class MatchController() {
         }
     }
 
-    suspend fun createMatch(matchCreate: MatchCreateReceiveRemote): MatchDTO? {
+    suspend fun createMatch(matchCreate: MatchCreateReceiveRemote): MatchResponse? {
         val existMatchSenderIsSender =
             MatchModel.fetchSenderRecipient(
                 UUID.fromString(matchCreate.cardIdSender),
@@ -102,7 +102,17 @@ class MatchController() {
         return if (existMatchSenderIsSender != null) {
             existMatchSenderIsSender.senderShow += 1
             MatchModel.updateFromSender(existMatchSenderIsSender)
-            existMatchSenderIsSender
+            MatchResponse(
+                id = existMatchSenderIsSender.id.toString(),
+                cardIdSender = existMatchSenderIsSender.cardIdSender.toString(),
+                cardIdRecipient = existMatchSenderIsSender.cardIdRecipient.toString(),
+                recipientShow = existMatchSenderIsSender.recipientShow,
+                senderShow = existMatchSenderIsSender.senderShow,
+                match = existMatchSenderIsSender.match.toString(),
+                idSender = existMatchSenderIsSender.idSender.toString(),
+                idRecipient = existMatchSenderIsSender.idRecipient.toString()
+            )
+
         } else if (existMatchSenderIsRecipient != null) {
             existMatchSenderIsRecipient.recipientShow += 1
             existMatchSenderIsRecipient.match = true
@@ -110,8 +120,16 @@ class MatchController() {
 
             // Chat create
             // notification for sender
-
-            existMatchSenderIsRecipient
+            MatchResponse(
+                id = existMatchSenderIsRecipient.id.toString(),
+                cardIdSender = existMatchSenderIsRecipient.cardIdSender.toString(),
+                cardIdRecipient = existMatchSenderIsRecipient.cardIdRecipient.toString(),
+                recipientShow = existMatchSenderIsRecipient.recipientShow,
+                senderShow = existMatchSenderIsRecipient.senderShow,
+                match = existMatchSenderIsRecipient.match.toString(),
+                idSender = existMatchSenderIsRecipient.idSender.toString(),
+                idRecipient = existMatchSenderIsRecipient.idRecipient.toString()
+            )
         } else {
             val recipient = OwnerModel.fetchOnCradid(UUID.fromString(matchCreate.cardIdRecipient))
 
@@ -128,7 +146,16 @@ class MatchController() {
                     idRecipient = UUID.fromString(matchCreate.cardIdRecipient)
                 )
                 MatchModel.create(newMatch)
-                newMatch
+                MatchResponse(
+                    id = newMatch.id.toString(),
+                    cardIdSender = newMatch.cardIdSender.toString(),
+                    cardIdRecipient = newMatch.cardIdRecipient.toString(),
+                    recipientShow = newMatch.recipientShow,
+                    senderShow = newMatch.senderShow,
+                    match = newMatch.match.toString(),
+                    idSender = newMatch.idSender.toString(),
+                    idRecipient = newMatch.idRecipient.toString()
+                )
             } else {
                 null
             }

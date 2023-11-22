@@ -135,16 +135,7 @@ fun Application.matchConfigure() {
 //                            idRecipient = match.idRecipient.toString()
 //                        ))
                         println("CreateMatch ${match.idSender}")
-                        call.respond(MatchResponse(
-                            id = match.id.toString(),
-                            cardIdSender = match.cardIdSender.toString(),
-                            cardIdRecipient = match.cardIdRecipient.toString(),
-                            recipientShow = match.recipientShow,
-                            senderShow = match.senderShow,
-                            match = match.match.toString(),
-                            idSender = match.idSender.toString(),
-                            idRecipient = match.idRecipient.toString()
-                        ))
+                        call.respond(match)
                     } else {
                         call.respond(HttpStatusCode.NotFound)
                     }
