@@ -108,7 +108,7 @@ class MatchController() {
                 cardIdRecipient = existMatchSenderIsSender.cardIdRecipient.toString(),
                 recipientShow = existMatchSenderIsSender.recipientShow,
                 senderShow = existMatchSenderIsSender.senderShow,
-                match = existMatchSenderIsSender.match.toString(),
+                match = existMatchSenderIsSender.match,
                 idSender = existMatchSenderIsSender.idSender.toString(),
                 idRecipient = existMatchSenderIsSender.idRecipient.toString()
             )
@@ -126,7 +126,7 @@ class MatchController() {
                 cardIdRecipient = existMatchSenderIsRecipient.cardIdRecipient.toString(),
                 recipientShow = existMatchSenderIsRecipient.recipientShow,
                 senderShow = existMatchSenderIsRecipient.senderShow,
-                match = existMatchSenderIsRecipient.match.toString(),
+                match = existMatchSenderIsRecipient.match,
                 idSender = existMatchSenderIsRecipient.idSender.toString(),
                 idRecipient = existMatchSenderIsRecipient.idRecipient.toString()
             )
@@ -152,7 +152,7 @@ class MatchController() {
                     cardIdRecipient = newMatch.cardIdRecipient.toString(),
                     recipientShow = newMatch.recipientShow,
                     senderShow = newMatch.senderShow,
-                    match = newMatch.match.toString(),
+                    match = newMatch.match,
                     idSender = newMatch.idSender.toString(),
                     idRecipient = newMatch.idRecipient.toString()
                 )

@@ -46,7 +46,7 @@ fun Application.matchConfigure() {
                                 cardIdRecipient = it.cardIdRecipient.toString(),
                                 recipientShow = it.recipientShow,
                                 senderShow = it.senderShow,
-                                match = it.match.toString(),
+                                match = it.match,
                                 idSender = it.idSender.toString(),
                                 idRecipient = it.idRecipient.toString()
                             )
@@ -74,7 +74,7 @@ fun Application.matchConfigure() {
                                 cardIdRecipient = it.cardIdRecipient.toString(),
                                 recipientShow = it.recipientShow,
                                 senderShow = it.senderShow,
-                                match = it.match.toString(),
+                                match = it.match,
                                 idSender = it.idSender.toString(),
                                 idRecipient = it.idRecipient.toString()
                             )
@@ -103,7 +103,7 @@ fun Application.matchConfigure() {
                             cardIdRecipient = match.cardIdRecipient.toString(),
                             recipientShow = match.recipientShow,
                             senderShow = match.senderShow,
-                            match = match.match.toString(),
+                            match = match.match,
                             idSender = match.idSender.toString(),
                             idRecipient = match.idRecipient.toString()
                         ))
