@@ -50,16 +50,18 @@ object MatchModel: Table("match") {
     private val idRecipient: Column<UUID> = MatchModel.uuid("id_rec")
 
     fun create(matchDTO: MatchDTO) {
-        MatchModel.insert {
-            it[id] = matchDTO.id
-            it[cardIdSender] = matchDTO.cardIdSender
-            it[cardIdRecipient] = matchDTO.cardIdRecipient
-            it[recipientShow] = matchDTO.recipientShow
-            it[senderShow] = matchDTO.senderShow
-            it[match] = matchDTO.match
-            it[createdAt] = matchDTO.createdAt
-            it[idSender] = matchDTO.idSender
-            it[idRecipient] = matchDTO.idRecipient
+        transaction {
+            MatchModel.insert {
+                it[id] = matchDTO.id
+                it[cardIdSender] = matchDTO.cardIdSender
+                it[cardIdRecipient] = matchDTO.cardIdRecipient
+                it[recipientShow] = matchDTO.recipientShow
+                it[senderShow] = matchDTO.senderShow
+                it[match] = matchDTO.match
+                it[createdAt] = matchDTO.createdAt
+                it[idSender] = matchDTO.idSender
+                it[idRecipient] = matchDTO.idRecipient
+            }
         }
     }
 
