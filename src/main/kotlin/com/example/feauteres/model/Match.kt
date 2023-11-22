@@ -9,17 +9,31 @@ import java.util.UUID
 
 @Serializable
 data class MatchCreateReceiveRemote(
-    val senderID: String,
-    val recipientID: String
+    val cardIdSender: String,
+    val cardIdRecipient: String,
+    val idSender: String
+)
+
+@Serializable
+data class MatchResponse(
+    val id: String,
+    val cardIdSender: String, // who liken first
+    val cardIdRecipient: String,
+    var recipientShow: Int,
+    var senderShow: Int,
+    var match: Boolean,
+    val createdAt: String,
+    val idSender: String,
+    val idRecipient: String
 )
 
 class MatchDTO(
     val id: UUID,
     val cardIdSender: UUID, // who liken first
     val cardIdRecipient: UUID,
-    val recipientShow: Int,
-    val senderShow: Int,
-    val match: Boolean,
+    var recipientShow: Int,
+    var senderShow: Int,
+    var match: Boolean,
     val createdAt: LocalDate,
     val idSender: UUID,
     val idRecipient: UUID
@@ -29,9 +43,9 @@ object MatchModel: Table("match") {
     private val id: Column<UUID> = MatchModel.uuid("id")
     private val cardIdSender: Column<UUID> = MatchModel.uuid("card_id_sen")
     private val cardIdRecipient: Column<UUID> = MatchModel.uuid("card_id_rec")
-    private val recipientShow: Column<Int> = MatchModel.integer("rec_show")
-    private val senderShow: Column<Int> = MatchModel.integer("sen_show")
-    private val match: Column<Boolean> = MatchModel.bool("match")
+    private var recipientShow: Column<Int> = MatchModel.integer("rec_show")
+    private var senderShow: Column<Int> = MatchModel.integer("sen_show")
+    private var match: Column<Boolean> = MatchModel.bool("match")
     private val createdAt: Column<LocalDate> = MatchModel.date("created_at")
     private val idSender: Column<UUID> = MatchModel.uuid("id_sen")
     private val idRecipient: Column<UUID> = MatchModel.uuid("id_rec")
@@ -75,7 +89,7 @@ object MatchModel: Table("match") {
     fun fetchRecipiend(recipientID: UUID): List<MatchDTO>? {
         return try {
             transaction {
-                MatchModel.select {MatchModel.idSender.eq(recipientID)}.map {
+                MatchModel.select {MatchModel.idRecipient.eq(recipientID)}.map {
                     MatchDTO(
                         id = it[MatchModel.id],
                         cardIdSender = it[MatchModel.cardIdSender],
@@ -94,22 +108,22 @@ object MatchModel: Table("match") {
         }
     }
 
-    fun fetchSenderRecipient(senID: UUID, recID: UUID): MatchDTO? {
+    fun fetchSenderRecipient(senCardID: UUID, recCardID: UUID): MatchDTO? {
         return try {
             transaction {
-                val executeMatch =
-                    MatchModel.select { (MatchModel.idSender eq senID) and (MatchModel.idRecipient eq recID) }.single()
+                val existMatch =
+                    MatchModel.select { (MatchModel.cardIdSender eq senCardID) and (MatchModel.cardIdRecipient eq recCardID) }.single()
 
                 MatchDTO(
-                    id = executeMatch[MatchModel.id],
-                    cardIdSender = executeMatch[MatchModel.cardIdSender],
-                    cardIdRecipient = executeMatch[MatchModel.cardIdRecipient],
-                    recipientShow = executeMatch[MatchModel.recipientShow],
-                    senderShow = executeMatch[MatchModel.senderShow],
-                    match = executeMatch[MatchModel.match],
-                    createdAt = executeMatch[MatchModel.createdAt],
-                    idSender = executeMatch[MatchModel.idSender],
-                    idRecipient = executeMatch[MatchModel.idRecipient]
+                    id = existMatch[MatchModel.id],
+                    cardIdSender = existMatch[MatchModel.cardIdSender],
+                    cardIdRecipient = existMatch[MatchModel.cardIdRecipient],
+                    recipientShow = existMatch[MatchModel.recipientShow],
+                    senderShow = existMatch[MatchModel.senderShow],
+                    match = existMatch[MatchModel.match],
+                    createdAt = existMatch[MatchModel.createdAt],
+                    idSender = existMatch[MatchModel.idSender],
+                    idRecipient = existMatch[MatchModel.idRecipient]
                 )
 
             }
@@ -122,7 +136,7 @@ object MatchModel: Table("match") {
         try {
             transaction {
                 MatchModel.update ({ MatchModel.idSender eq matchDTO.idSender }) {
-                    it[recipientShow] = matchDTO.recipientShow
+                    it[senderShow] = matchDTO.senderShow
                 }
             }
         } catch (e: Exception) {

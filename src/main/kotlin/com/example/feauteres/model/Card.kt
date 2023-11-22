@@ -87,7 +87,8 @@ object CardModel: Table("card") {
     fun fetchOnSex(sex: String): List<CardDTO>? {
         return try {
             transaction {
-                val cardModel = CardModel.select { CardModel.sex.eq(sex)}
+                val cardModel = CardModel.select { CardModel.sex.eq(sex)}.limit(10)
+                println("cardModel.count is ${cardModel.count()}")
                 cardModel.map{
                     CardDTO(id = it[CardModel.id], name = it[name],
                     description = it[description], location = it[location],

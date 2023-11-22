@@ -109,5 +109,19 @@ enum class Endpoint(val str: String) {
     FetchCardsOnSex("/auth/fetchCardsOnSex"),
     FetchCardsTags("/auth/fetchCardsTags/{cardID}"),
     SetNewCardTags("/auth/setNewCardTags"),
-    SetExistCardTags("/auth/setExistCardTags")
+    SetExistCardTags("/auth/setExistCardTags"),
+    //todo: match
+    FetchExistMatchSenderIDCheck("/auth/fetchExistMatchSenderIDCheck/{id}"),
+    FetchExistMatchRecipientIDCheck("/auth/fetchExistMatchRecipientIDCheck/{id}"),
+    UpdateMatch("/auth/updateMatch/{senCardID}/{recCardID}"),
+    CreateMatch("/auth/createMatch")
+
 }
+
+
+
+
+
+
+
+
