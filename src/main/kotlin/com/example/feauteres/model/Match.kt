@@ -22,7 +22,6 @@ data class MatchResponse(
     var recipientShow: Int,
     var senderShow: Int,
     var match: String,
-    val createdAt: String,
     val idSender: String,
     val idRecipient: String
 )

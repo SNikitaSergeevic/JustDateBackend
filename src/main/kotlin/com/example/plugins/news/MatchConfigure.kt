@@ -5,6 +5,7 @@ import com.example.feauteres.controllers.MatchController
 import com.example.feauteres.model.MatchCreateReceiveRemote
 import com.example.feauteres.model.MatchResponse
 import com.example.plugins.Endpoint
+import kotlinx.serialization.Serializable
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -46,7 +47,6 @@ fun Application.matchConfigure() {
                                 recipientShow = it.recipientShow,
                                 senderShow = it.senderShow,
                                 match = it.match.toString(),
-                                createdAt = it.createdAt.toString(),
                                 idSender = it.idSender.toString(),
                                 idRecipient = it.idRecipient.toString()
                             )
@@ -75,7 +75,6 @@ fun Application.matchConfigure() {
                                 recipientShow = it.recipientShow,
                                 senderShow = it.senderShow,
                                 match = it.match.toString(),
-                                createdAt = it.createdAt.toString(),
                                 idSender = it.idSender.toString(),
                                 idRecipient = it.idRecipient.toString()
                             )
@@ -105,7 +104,6 @@ fun Application.matchConfigure() {
                             recipientShow = match.recipientShow,
                             senderShow = match.senderShow,
                             match = match.match.toString(),
-                            createdAt = match.createdAt.toString(),
                             idSender = match.idSender.toString(),
                             idRecipient = match.idRecipient.toString()
                         ))
@@ -136,6 +134,7 @@ fun Application.matchConfigure() {
 //                            idSender = match.idSender.toString(),
 //                            idRecipient = match.idRecipient.toString()
 //                        ))
+                        println("CreateMatch ${match.idSender}")
                         call.respond(MatchResponse(
                             id = match.id.toString(),
                             cardIdSender = match.cardIdSender.toString(),
@@ -143,7 +142,6 @@ fun Application.matchConfigure() {
                             recipientShow = match.recipientShow,
                             senderShow = match.senderShow,
                             match = match.match.toString(),
-                            createdAt = match.createdAt.toString(),
                             idSender = match.idSender.toString(),
                             idRecipient = match.idRecipient.toString()
                         ))
