@@ -45,7 +45,7 @@ fun Application.matchConfigure() {
                                 cardIdRecipient = it.cardIdRecipient.toString(),
                                 recipientShow = it.recipientShow,
                                 senderShow = it.senderShow,
-                                match = it.match,
+                                match = it.match.toString(),
                                 createdAt = it.createdAt.toString(),
                                 idSender = it.idSender.toString(),
                                 idRecipient = it.idRecipient.toString()
@@ -74,7 +74,7 @@ fun Application.matchConfigure() {
                                 cardIdRecipient = it.cardIdRecipient.toString(),
                                 recipientShow = it.recipientShow,
                                 senderShow = it.senderShow,
-                                match = it.match,
+                                match = it.match.toString(),
                                 createdAt = it.createdAt.toString(),
                                 idSender = it.idSender.toString(),
                                 idRecipient = it.idRecipient.toString()
@@ -104,7 +104,7 @@ fun Application.matchConfigure() {
                             cardIdRecipient = match.cardIdRecipient.toString(),
                             recipientShow = match.recipientShow,
                             senderShow = match.senderShow,
-                            match = match.match,
+                            match = match.match.toString(),
                             createdAt = match.createdAt.toString(),
                             idSender = match.idSender.toString(),
                             idRecipient = match.idRecipient.toString()
@@ -142,7 +142,7 @@ fun Application.matchConfigure() {
                             cardIdRecipient = match.cardIdRecipient.toString(),
                             recipientShow = match.recipientShow,
                             senderShow = match.senderShow,
-                            match = match.match,
+                            match = match.match.toString(),
                             createdAt = match.createdAt.toString(),
                             idSender = match.idSender.toString(),
                             idRecipient = match.idRecipient.toString()

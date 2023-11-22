@@ -21,7 +21,7 @@ data class MatchResponse(
     val cardIdRecipient: String,
     var recipientShow: Int,
     var senderShow: Int,
-    var match: Boolean,
+    var match: String,
     val createdAt: String,
     val idSender: String,
     val idRecipient: String
