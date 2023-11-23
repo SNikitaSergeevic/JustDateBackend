@@ -18,19 +18,7 @@ import java.util.*
 fun Application.matchConfigure() {
     routing {
         authenticate("auth-jwt") {
-            post(Endpoint.FetchCardsOnSex.str) {
-                try {
-                    val cardController = CardController()
-                    val cardResponse = cardController.fetchCardSex(call)
-                    if (cardResponse != null) {
-                        call.respond(cardResponse)
-                    } else {
-                        call.respond(HttpStatusCode.Conflict)
-                    }
-                } catch (e: Exception) {
-                    call.respond(HttpStatusCode.NotFound)
-                }
-            }
+
 
             get(Endpoint.FetchExistMatchSenderIDCheck.str) {
                 try {

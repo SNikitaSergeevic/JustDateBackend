@@ -19,6 +19,7 @@ fun Application.configureRouting() {
 
     //TODO: News
     ownerConfigure()
+    cardConfigure()
     imageConfigure()
     matchConfigure()
     tagConfigure()
