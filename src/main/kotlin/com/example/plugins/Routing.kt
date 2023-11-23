@@ -23,7 +23,7 @@ fun Application.configureRouting() {
     imageConfigure()
     matchConfigure()
     tagConfigure()
-
+    configureSockets()
 
 
     routing {

@@ -49,7 +49,7 @@ import java.io.*
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 fun Application.module() {
-    configureSockets()
+
     configureSerialization()
     configureDatabases()
 //    configureHTTP()  //swagger config
