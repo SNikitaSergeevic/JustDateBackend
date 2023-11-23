@@ -17,7 +17,7 @@ fun Application.configureSockets() {
         masking = false
     }
     routing {
-        authenticate("auth-jwt") {
+//        authenticate("auth-jwt") {
             webSocket("/ws") { // websocketSession
                 for (frame in incoming) {
                     if (frame is Frame.Text) {
@@ -29,6 +29,6 @@ fun Application.configureSockets() {
                     }
                 }
             }
-        }
+//        }
     }
 }
