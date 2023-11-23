@@ -5,6 +5,7 @@ import io.ktor.websocket.*
 import java.time.Duration
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.webSocket
 
