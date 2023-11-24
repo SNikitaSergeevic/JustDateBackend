@@ -9,6 +9,7 @@ import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.webSocket
+import kotlinx.serialization.json.Json
 
 fun Application.configureSockets() {
     install(WebSockets) {
@@ -36,12 +37,13 @@ fun Application.configureSockets() {
                 for (frame in incoming) {
                     if (frame is Frame.Text) {
                         val text = frame.readText()
+                        val receiveMessage = Json.decodeFromString<MessageReceiveRemote>(text)
                         outgoing.send(Frame.Text("YOU SAID: $text"))
                         if (text.equals("bye", ignoreCase = true)) {
                             close(CloseReason(CloseReason.Codes.NORMAL, "Client said BYE"))
                         }
 //                        val receiveMessage = receiveDeserialized<MessageReceiveRemote>()
-//                        println("message: ${receiveMessage.text} \n sender: ${receiveMessage.senderID} \n recipient: ${receiveMessage.recipientID}")
+                        println("message: ${receiveMessage.text} \n sender: ${receiveMessage.senderID} \n recipient: ${receiveMessage.recipientID}")
                     }
                 }
             }
