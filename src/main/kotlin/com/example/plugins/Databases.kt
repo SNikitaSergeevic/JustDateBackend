@@ -58,21 +58,21 @@ fun Application.configureDatabases() {
  * @return [Connection] that represent connection to the database. Please, don't forget to close this connection when
  * your application shuts down by calling [Connection.close]
  * */
-fun Application.connectToPostgres(embedded: Boolean): Connection {
-    Class.forName("org.postgresql.Driver")
-    if (embedded) {
-        return DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "root", "")
-    } else {
-        //todo: url1 - old db; url2 - new db for net connect; url3 - new db for local connect
-        val url1 = environment.config.property("jdbc:postgresql://localhost:5432/justdatedb.justdate_schema").getString()
-        val url2 = environment.config.property("jdbc:postgresql://192.168.0.100:5432/justdatedb_1").getString()
-        val url3 = environment.config.property("jdbc:postgresql://localhost:5432/justdatedb_1").getString()
-
-
-        val user = environment.config.property("osmilijey").getString()
-        val password = environment.config.property("16710985").getString()
-
-        return DriverManager.getConnection(url2, user, password)
-    }
-}
+//fun Application.connectToPostgres(embedded: Boolean): Connection {
+//    Class.forName("org.postgresql.Driver")
+//    if (embedded) {
+//        return DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "root", "")
+//    } else {
+//        //todo: url1 - old db; url2 - new db for net connect; url3 - new db for local connect
+//        val url1 = environment.config.property("jdbc:postgresql://localhost:5432/justdatedb.justdate_schema").getString()
+//        val url2 = environment.config.property("jdbc:postgresql://192.168.0.100:5432/justdatedb_1").getString()
+//        val url3 = environment.config.property("jdbc:postgresql://localhost:5432/justdatedb_1").getString()
+//
+//
+//        val user = environment.config.property("osmilijey").getString()
+//        val password = environment.config.property("16710985").getString()
+//
+//        return DriverManager.getConnection(url2, user, password)
+//    }
+//}
 
