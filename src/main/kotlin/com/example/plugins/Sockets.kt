@@ -1,5 +1,6 @@
 package com.example.plugins
 
+import com.example.feauteres.model.MessageReceiveRemote
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
 import java.time.Duration
@@ -18,7 +19,7 @@ fun Application.configureSockets() {
     }
     routing {
         authenticate("auth-jwt") {
-            webSocket("/ws") { // websocketSession
+            webSocket("/auth/talk") { // websocketSession
                 for (frame in incoming) {
                     if (frame is Frame.Text) {
                         val text = frame.readText()
@@ -29,6 +30,26 @@ fun Application.configureSockets() {
                     }
                 }
             }
+
+            webSocket("/auth/sendMessage") { // websocketSession
+
+                for (frame in incoming) {
+                    if (frame is Frame.Text) {
+                        val text = frame.readText()
+                        if (text.equals("bye", ignoreCase = true)) {
+                            close(CloseReason(CloseReason.Codes.NORMAL, "Client said BYE"))
+                        }
+                        val receiveMessage = receiveDeserialized<MessageReceiveRemote>()
+                        println("message: ${receiveMessage.text} \n sender: ${receiveMessage.senderID} \n recipient: ${receiveMessage.recipientID}")
+                    }
+                }
+
+
+
+
+
+            }
+
         }
     }
 }
