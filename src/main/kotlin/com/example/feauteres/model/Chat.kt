@@ -1,19 +1,29 @@
 package com.example.feauteres.model
 
+import io.ktor.websocket.*
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.javatime.CurrentDateTime
 import org.jetbrains.exposed.sql.javatime.date
-import org.jetbrains.exposed.sql.javatime.timestamp
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.sql.Date
-import java.time.DateTimeException
 import java.time.LocalDate
 import java.util.UUID
 
 
 //TODO: ChatModel
+
+@Serializable
+data class ChatReceiveRemote(
+    val id: String,
+    val ownerID: String,
+    val companionID: String
+)
+
+class ChatSocketSession(
+    val id: UUID,
+    val chatDTO: ChatDTO,
+    val socketSession: WebSocketSession
+)
+
 class ChatDTO (val id: UUID,
                val ownerID: UUID,
                val companionID: UUID,
@@ -40,6 +50,22 @@ object ChatModel: Table("chat")  { // chat not exist in DB
         return try {
             transaction {
                 val chat = ChatModel.select {(ChatModel.ownerID eq ownerID) and (ChatModel.companionID eq companionID)}.single()
+                ChatDTO(
+                    id = chat[ChatModel.id],
+                    ownerID = chat[ChatModel.ownerID],
+                    companionID = chat[ChatModel.companionID],
+                    createdAt = chat[ChatModel.createdAt]
+                )
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    fun fetchOnChatID(chatID: UUID): ChatDTO? {
+        return try {
+            transaction {
+                val chat = ChatModel.select{ChatModel.id eq chatID}.single()
                 ChatDTO(
                     id = chat[ChatModel.id],
                     ownerID = chat[ChatModel.ownerID],

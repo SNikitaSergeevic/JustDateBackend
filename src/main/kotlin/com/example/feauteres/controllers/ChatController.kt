@@ -1,12 +1,103 @@
 package com.example.feauteres.controllers
 
 import com.example.feauteres.model.*
+import io.ktor.serialization.*
 import java.time.LocalDate
 import java.util.*
-import io.ktor.server.application.*
-import io.ktor.server.request.*
+import io.ktor.websocket.*
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
+import java.util.concurrent.ConcurrentHashMap
+
+
+
+
+class MemberAlreadyExistException: Exception ("There is already a member with that chatID in the room.")
+
+
 
 class ChatController() {
+
+
+    private val members = ConcurrentHashMap <String, ChatSocketSession>()
+
+    fun onJoinChat(chatID: UUID, sessionID: String, socket: WebSocketSession) {
+//            sessionID this chat.ownerID
+
+        val chat = ChatModel.fetchOnChatID(chatID)
+
+        if (chat != null) {
+            if (members.containsKey(chat.ownerID.toString())) {
+                throw MemberAlreadyExistException()
+            }
+
+            val chatSocketSession = ChatSocketSession(
+                id = UUID.randomUUID(),
+                chatDTO = chat,
+                socketSession = socket
+            )
+
+            members[sessionID] = chatSocketSession
+        }
+
+    }
+
+    suspend fun sendMessageT(ownerID: UUID, companionID: UUID, messageJson: String) {
+        val messageReceiveRemote = Json.decodeFromString<MessageReceiveRemote>(messageJson)
+
+        val currentDate = LocalDate.now()
+        val chatID = UUID.fromString(messageReceiveRemote.chatID)
+        val senderID = UUID.fromString(messageReceiveRemote.senderID)
+        val recipientID = UUID.fromString(messageReceiveRemote.recipientID)
+
+        val ownerSession = members[ownerID.toString()]
+        val companionSession = members[companionID.toString()]
+
+        val messageDTOSenderChat = MessageDTO(
+            id = UUID.randomUUID(),
+            chatID = chatID,
+            senderID = senderID,
+            recipientID = recipientID,
+            text = messageReceiveRemote.text,
+            createdAt = currentDate
+        )
+        MessageModel.create(messageDTOSenderChat)
+
+        val recipientChat = ChatModel.fetch(
+            ownerID = recipientID,
+            companionID = senderID
+        )
+
+        if (recipientChat != null) {
+            val messageDTORecipientChat = MessageDTO(
+                id = UUID.randomUUID(),
+                chatID = recipientChat.id,
+                senderID = senderID,
+                recipientID = recipientID,
+                text = messageReceiveRemote.text,
+                createdAt = currentDate
+            )
+            MessageModel.create(messageDTORecipientChat)
+        }
+
+        if (ownerSession != null) {
+            ownerSession.socketSession.send(content = messageJson)
+        }
+
+        if (companionSession != null) {
+            companionSession.socketSession.send(content = messageJson)
+        }
+
+        // this send notification message
+
+    }
+
+    suspend fun tryDisconnect(ownerID: String) {
+        members[ownerID]?.socketSession?.close()
+        if (members.containsKey(ownerID)) {
+            members.remove(ownerID)
+        }
+    }
 
     fun createChat(ownerID: UUID, companionID: UUID): ChatDTO? {
         val date = LocalDate.now()
@@ -66,9 +157,14 @@ class ChatController() {
 
     }
 
+
+
     fun getAllMessageForChat(chatID: UUID): List<MessageDTO>? {
         return MessageModel.fetchMessage(chatID)
     }
+
+
+
 
 
 

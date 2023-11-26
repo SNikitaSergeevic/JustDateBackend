@@ -1,13 +1,19 @@
 package com.example.plugins
 
+import com.example.feauteres.controllers.ChatController
+import com.example.feauteres.controllers.MemberAlreadyExistException
+import com.example.feauteres.model.ChatReceiveRemote
 import com.example.feauteres.model.MessageReceiveRemote
+import io.ktor.http.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
 import java.time.Duration
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.sessions.*
 import io.ktor.server.websocket.webSocket
 import kotlinx.serialization.json.Json
 import java.util.*
@@ -21,6 +27,9 @@ fun Application.configureSockets() {
         maxFrameSize = Long.MAX_VALUE
         masking = false
     }
+
+    val chatController = ChatController()
+
     routing {
         authenticate("auth-jwt") {
             webSocket("/auth/talk") { // websocketSession
@@ -54,26 +63,28 @@ fun Application.configureSockets() {
 
             }
 
-            val connections = Collections.synchronizedSet<Connection?>(LinkedHashSet())
-            webSocket("/chat") {
+
+            webSocket("/auth/chat") {
                 println("Adding user!")
-                val thisConnection = Connection(this)
-                connections += thisConnection
+
+                val chat = call.sessions.get<ChatReceiveRemote>()
+                if (chat == null) {
+                    close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "no session"))
+                    return@webSocket
+                }
+
                 try {
-                    send("You are connected! There are ${connections.count()} users here.")
-                    for (frame in incoming) {
-                        frame as? Frame.Text ?: continue
-                        val receivedText = frame.readText()
-                        val textWithUsername = "[${thisConnection.name}]: $receivedText"
-                        connections.forEach {
-                            it.session.send(textWithUsername)
-                        }
-                    }
+                    chatController.onJoinChat(
+                        chatID = UUID.fromString(chat.id),
+                        sessionID = chat.ownerID,
+                        socket = this
+                    )
+                } catch(e: MemberAlreadyExistException) {
+                    call.respond(HttpStatusCode.Conflict)
                 } catch (e: Exception) {
-                    println(e.localizedMessage)
+                    e.printStackTrace()
                 } finally {
-                    println("Removing $thisConnection!")
-                    connections -= thisConnection
+                    chatController.tryDisconnect(chat.ownerID)
                 }
             }
 
@@ -87,5 +98,13 @@ class Connection(val session: DefaultWebSocketSession) {
         val lastId = AtomicInteger(0)
     }
     val name = "user${lastId.getAndIncrement()}"
+
+}
+
+
+
+fun Route.chatSocket(chatController: ChatController) {
+
+
 
 }

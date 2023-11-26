@@ -1,6 +1,7 @@
 package com.example.plugins
 
 
+import com.example.feauteres.controllers.ChatController
 import com.example.plugins.news.*
 import io.ktor.server.routing.*
 import io.ktor.server.response.*
@@ -23,7 +24,12 @@ fun Application.configureRouting() {
     imageConfigure()
     matchConfigure()
     tagConfigure()
+
     configureSockets()
+    val chatController = ChatController()
+    install(Routing) {
+        chatSocket(chatController)
+    }
 
 
     routing {
