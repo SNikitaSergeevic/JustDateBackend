@@ -11,7 +11,7 @@ import java.util.UUID
 
 //TODO: ChatModel
 
-@Serializable
+//@Serializable
 data class ChatReceiveRemote(
     val id: String,
     val ownerID: String,
