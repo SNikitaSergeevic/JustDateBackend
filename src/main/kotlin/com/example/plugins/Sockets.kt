@@ -15,6 +15,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.server.websocket.webSocket
+import kotlinx.coroutines.channels.consumeEach
 import kotlinx.serialization.json.Json
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
@@ -79,6 +80,16 @@ fun Application.configureSockets() {
                         sessionID = chat.ownerID,
                         socket = this
                     )
+                    incoming.consumeEach { frame ->
+                        if(frame is Frame.Text) {
+                            chatController.sendMessageT(
+                                ownerID = UUID.fromString(chat.ownerID),
+                                companionID = UUID.fromString(chat.companionID),
+                                messageJson = frame.readText()
+                            )
+                        }
+
+                    }
                 } catch(e: MemberAlreadyExistException) {
                     call.respond(HttpStatusCode.Conflict)
                 } catch (e: Exception) {

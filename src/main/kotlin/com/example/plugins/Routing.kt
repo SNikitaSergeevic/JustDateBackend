@@ -26,10 +26,7 @@ fun Application.configureRouting() {
     tagConfigure()
 
     configureSockets()
-    val chatController = ChatController()
-    install(Routing) {
-        chatSocket(chatController)
-    }
+
 
 
     routing {
