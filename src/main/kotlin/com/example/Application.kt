@@ -53,7 +53,7 @@ fun Application.module() {
     configureSerialization()
     configureDatabases()
 //    configureHTTP()  //swagger config
-//    configureSecurity()
+    configureSecurity()
     configureRouting()
 }
 

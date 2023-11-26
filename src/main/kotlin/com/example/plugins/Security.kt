@@ -1,5 +1,6 @@
 package com.example.plugins
 
+import com.example.feauteres.model.ChatReceiveRemote
 import io.ktor.server.sessions.*
 import io.ktor.server.response.*
 import io.ktor.server.application.*
@@ -10,6 +11,9 @@ fun Application.configureSecurity() {
     install(Sessions) {
         cookie<MySession>("MY_SESSION") {
             cookie.extensions["SameSite"] = "lax"
+        }
+        cookie<ChatReceiveRemote>("CHAT_SESSION") {
+            cookie<ChatReceiveRemote>("SESSION")
         }
     }
     routing {
