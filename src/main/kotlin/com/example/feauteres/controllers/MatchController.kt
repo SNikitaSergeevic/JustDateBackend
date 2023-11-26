@@ -72,8 +72,24 @@ class MatchController() {
             existMatchSenderIsRecipient.match = true
             MatchModel.updateFromRecipient(existMatchSenderIsRecipient)
 
-            // Chat create
-            // notification for sender
+            val currentDate = LocalDate.now()
+            val chatOwnerIsSender = ChatDTO(
+                id = UUID.randomUUID(),
+                ownerID = existMatchSenderIsRecipient.idSender,
+                companionID = existMatchSenderIsRecipient.idRecipient,
+                createdAt = currentDate
+            )
+
+            val chatOwnerIsRecipient = ChatDTO(
+                id = UUID.randomUUID(),
+                ownerID = existMatchSenderIsRecipient.idRecipient,
+                companionID = existMatchSenderIsRecipient.idSender,
+                createdAt = currentDate
+            )
+            ChatModel.create(chatOwnerIsRecipient)
+            ChatModel.create(chatOwnerIsSender)
+
+
             MatchResponse(
                 id = existMatchSenderIsRecipient.id.toString(),
                 cardIdSender = existMatchSenderIsRecipient.cardIdSender.toString(),
@@ -100,6 +116,7 @@ class MatchController() {
                     idRecipient = recipient.id
                 )
                 MatchModel.create(newMatch)
+
                 MatchResponse(
                     id = newMatch.id.toString(),
                     cardIdSender = newMatch.cardIdSender.toString(),
