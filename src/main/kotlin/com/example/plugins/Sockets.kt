@@ -67,7 +67,7 @@ fun Application.configureSockets() {
 
 
             webSocket("/auth/chat") {
-                println("Adding user!")
+                println("\n ==== START! \n")
 
                 val chat = call.sessions.get<ChatReceiveRemote>()
                 if (chat == null) {
@@ -75,7 +75,9 @@ fun Application.configureSockets() {
                     return@webSocket
                 }
 
+                println("\n ==== 1 \n")
                 try {
+                    println("\n ==== 2 \n")
                     chatController.onJoinChat(
                         chatID = UUID.fromString(chat.id),
                         sessionID = chat.ownerID,
@@ -98,6 +100,7 @@ fun Application.configureSockets() {
                 } finally {
                     chatController.tryDisconnect(chat.ownerID)
                 }
+                println("\n ==== 3 \n")
             }
 
             get(Endpoint.GetChat.str) {
