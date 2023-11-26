@@ -163,6 +163,10 @@ class ChatController() {
         return MessageModel.fetchMessage(chatID)
     }
 
+    fun getChat(ownerID: UUID, companionID: UUID): ChatDTO? {
+        return ChatModel.fetch(ownerID, companionID)
+    }
+
 
 
 

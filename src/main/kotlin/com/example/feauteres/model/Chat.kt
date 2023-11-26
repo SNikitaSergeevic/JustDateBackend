@@ -18,6 +18,13 @@ data class ChatReceiveRemote(
     val companionID: String
 )
 
+@Serializable
+data class ChatResponse(
+    val id: String,
+    val ownerID: String,
+    val companionID: String
+)
+
 class ChatSocketSession(
     val id: UUID,
     val chatDTO: ChatDTO,

@@ -3,6 +3,7 @@ package com.example.plugins
 import com.example.feauteres.controllers.ChatController
 import com.example.feauteres.controllers.MemberAlreadyExistException
 import com.example.feauteres.model.ChatReceiveRemote
+import com.example.feauteres.model.ChatResponse
 import com.example.feauteres.model.MessageReceiveRemote
 import io.ktor.http.*
 import io.ktor.server.websocket.*
@@ -97,6 +98,29 @@ fun Application.configureSockets() {
                 } finally {
                     chatController.tryDisconnect(chat.ownerID)
                 }
+            }
+
+            get(Endpoint.GetChat.str) {
+                val ownerID = call.parameters["ownerID"]
+                val companionID = call.parameters["companionID"]
+
+                try {
+                    val chat = chatController.getChat(UUID.fromString(ownerID), UUID.fromString(companionID))
+                    if (chat != null) {
+                        call.respond(
+                            HttpStatusCode.Accepted,
+                            ChatResponse(
+                                id = chat.id.toString(),
+                                ownerID = chat.ownerID.toString(),
+                                companionID = chat.companionID.toString()
+                            )
+                        )
+                    }
+                } catch (e: Exception) {
+                    call.respond(HttpStatusCode.Conflict, e)
+                }
+
+
             }
 
         }
