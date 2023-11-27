@@ -72,7 +72,7 @@ fun Application.module() {
 
 
 
-    configureSecurity()
+//    configureSecurity()
 }
 
 /*

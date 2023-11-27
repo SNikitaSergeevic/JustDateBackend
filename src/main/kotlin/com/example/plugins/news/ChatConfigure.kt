@@ -19,6 +19,7 @@ import kotlinx.serialization.json.Json
 import java.util.*
 
 fun Route.chatConfigure(chatController: ChatController) {
+
     authenticate("auth-jwt") {
         webSocket("/auth/talk") { // websocketSession
             for (frame in incoming) {
