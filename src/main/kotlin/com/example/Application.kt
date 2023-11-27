@@ -69,8 +69,7 @@ fun Application.module() {
 //    configureHTTP()  //swagger config
 
 
-install(WebSockets)
-//    configureSecurity()
+    configureSecurity()
 }
 
 /*

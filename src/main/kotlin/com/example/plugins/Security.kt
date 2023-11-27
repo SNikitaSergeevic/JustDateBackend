@@ -1,6 +1,7 @@
 package com.example.plugins
 
 import com.example.feauteres.model.ChatReceiveRemote
+import com.example.feauteres.model.SessionData
 import io.ktor.server.sessions.*
 import io.ktor.server.response.*
 import io.ktor.server.application.*
@@ -15,17 +16,23 @@ fun Application.configureSecurity() {
 //        cookie<MySession>("MY_SESSION") {
 //            cookie.extensions["SameSite"] = "lax"
 //        }
-//        cookie<ChatReceiveRemote>("SESSION")
+        cookie<SessionData>("SESSION")
+
     }
 
     intercept(Plugins) {
-        if(call.sessions.get<ChatReceiveRemote>() == null) {
+        val session = call.sessions.get<SessionData>()
+        if(session == null) {
 //            val username = call.parameters["username"] ?: "Guest"
 //            call.sessions.set(ChatSession(username, generateNonce()))
+            println("\n ==== SessionNotExist === \n")
+            call.sessions.set(SessionData("", "", ""))
 
-            val chat = call.receive<ChatReceiveRemote>()
+
+        } else {
+            println("\n ==== SessionExist === \n")
+            val chat = call.receive<SessionData>()
             call.sessions.set(chat)
-
         }
     }
 //    routing {
