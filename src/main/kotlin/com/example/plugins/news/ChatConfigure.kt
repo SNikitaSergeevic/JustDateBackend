@@ -2,7 +2,6 @@ package com.example.plugins.news
 
 import com.example.feauteres.controllers.ChatController
 import com.example.feauteres.controllers.MemberAlreadyExistException
-import com.example.feauteres.model.ChatReceiveRemote
 import com.example.feauteres.model.ChatResponse
 import com.example.feauteres.model.MessageReceiveRemote
 import com.example.feauteres.model.SessionData
@@ -54,7 +53,7 @@ fun Route.chatConfigure(chatController: ChatController) {
         }
 
 
-        webSocket("/auth/chat") {
+        webSocket("/auth/chat/{ownerID}/{companionID}") {
             println("\n ==== START! \n")
 
             val chat = call.sessions.get<SessionData>()
@@ -67,8 +66,8 @@ fun Route.chatConfigure(chatController: ChatController) {
             try {
                 println("\n ==== 2 \n")
                 chatController.onJoinChat(
-                    chatID = UUID.fromString(chat.id),
-                    sessionID = chat.ownerID,
+                    ownerID = chat.ownerID,
+                    companionID = chat.companionID,
                     socket = this
                 )
                 incoming.consumeEach { frame ->

@@ -27,7 +27,9 @@ fun Application.configureSecurity() {
 //            call.sessions.set(ChatSession(username, generateNonce()))
             println("\n ==== SessionNotExist === \n")
             val ownerID = call.parameters["ownerID"].toString()
-            call.sessions.set(SessionData(ownerID))
+            val companionID = call.parameters["companionID"].toString()
+
+            call.sessions.set(SessionData(ownerID, companionID))
 
         } else {
             println("\n ==== SessionExist === \n")

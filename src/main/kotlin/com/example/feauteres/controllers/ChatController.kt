@@ -5,7 +5,6 @@ import io.ktor.serialization.*
 import java.time.LocalDate
 import java.util.*
 import io.ktor.websocket.*
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import java.util.concurrent.ConcurrentHashMap
 
@@ -21,10 +20,10 @@ class ChatController() {
 
     private val members = ConcurrentHashMap <String, ChatSocketSession>()
 
-    fun onJoinChat(chatID: UUID, sessionID: String, socket: WebSocketSession) {
+    fun onJoinChat(ownerID: String, companionID: String, socket: WebSocketSession) {
 //            sessionID this chat.ownerID
 
-        val chat = ChatModel.fetchOnChatID(chatID)
+        val chat = ChatModel.fetch(UUID.fromString(ownerID), UUID.fromString(companionID))
 
         if (chat != null) {
             if (members.containsKey(chat.ownerID.toString())) {
@@ -37,7 +36,7 @@ class ChatController() {
                 socketSession = socket
             )
 
-            members[sessionID] = chatSocketSession
+            members[ownerID] = chatSocketSession
         }
 
     }
