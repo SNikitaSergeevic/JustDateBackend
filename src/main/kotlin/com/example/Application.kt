@@ -57,7 +57,7 @@ import com.example.mainModule
 
 fun main(args: Array<String>): Unit = EngineMain.main(args)
 
-@Suppress("unused")
+
 fun Application.module() {
 
 //    install(Koin) {
@@ -65,11 +65,12 @@ fun Application.module() {
 //    }
 
     configureSockets()
+    configureRouting()
     configureSerialization()
     configureDatabases()
 //    configureHTTP()  //swagger config
 
-    configureRouting()
+
 
     configureSecurity()
 }
