@@ -55,6 +55,8 @@ fun Application.module() {
 //    configureHTTP()  //swagger config
 
     configureRouting()
+
+    configureSecurity()
 }
 
 /*

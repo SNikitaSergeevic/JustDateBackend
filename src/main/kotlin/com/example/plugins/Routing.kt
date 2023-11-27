@@ -25,7 +25,7 @@ fun Application.configureRouting() {
     matchConfigure()
     tagConfigure()
 
-    configureSecurity()
+
 
     configureSockets()
 
