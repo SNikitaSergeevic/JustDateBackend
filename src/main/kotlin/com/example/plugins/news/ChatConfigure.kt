@@ -82,13 +82,16 @@ fun Route.chatConfigure(chatController: ChatController) {
 
                 }
             } catch(e: MemberAlreadyExistException) {
+                println("\n ==== 3 \n")
                 call.respond(HttpStatusCode.Conflict)
             } catch (e: Exception) {
+                println("\n ==== 4 \n")
                 e.printStackTrace()
             } finally {
+                println("\n ==== 5 \n")
                 chatController.tryDisconnect(chat.ownerID)
             }
-            println("\n ==== 3 \n")
+            println("\n ==== 6 \n")
         }
 
         get(Endpoint.GetChat.str) {
