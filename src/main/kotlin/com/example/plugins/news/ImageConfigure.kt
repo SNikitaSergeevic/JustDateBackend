@@ -10,9 +10,9 @@ import io.ktor.server.auth.*
 import io.ktor.server.request.*
 
 
-fun Application.imageConfigure() {
+fun Route.imageConfigure() {
 
-    routing {
+
         authenticate("auth-jwt") {
             get(Endpoint.GetImages.str) {
                 val imageID = call.parameters["imageID"]!!
@@ -54,6 +54,6 @@ fun Application.imageConfigure() {
             }
 
         }
-    }
+
 
 }

@@ -12,36 +12,41 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import java.util.*
 
-fun Application.ownerConfigure() {
+fun Route.ownerConfigure(
+    secret: String,
+    issuer: String,
+    audience: String,
+    myRealm: String
+) {
 
-    val secret = environment.config.property("jwt.secret").getString()
-    val issuer = environment.config.property("jwt.issuer").getString()
-    val audience = environment.config.property("jwt.audience").getString()
-    val myRealm = environment.config.property("jwt.realm").getString()
+//    val secret = environment.config.property("jwt.secret").getString()
+//    val issuer = environment.config.property("jwt.issuer").getString()
+//    val audience = environment.config.property("jwt.audience").getString()
+//    val myRealm = environment.config.property("jwt.realm").getString()
 
-    install(Authentication) {
-        jwt("auth-jwt") {
-            realm = myRealm
-            verifier(
-                JWT
-                    .require(Algorithm.HMAC256(secret))
-                    .withAudience(audience)
-                    .withIssuer(issuer)
-                    .build())
-            validate { credential ->
-                if (credential.payload.getClaim("id").asString() != "") {
-                    JWTPrincipal(credential.payload)
-                } else {
-                    null
-                }
-            }
-            challenge { defaultSchema, realm ->
-                call.respond(HttpStatusCode.Unauthorized, "Token is not valid or has expired")
-            }
-        }
-    }
+//    install(Authentication) {
+//        jwt("auth-jwt") {
+//            realm = myRealm
+//            verifier(
+//                JWT
+//                    .require(Algorithm.HMAC256(secret))
+//                    .withAudience(audience)
+//                    .withIssuer(issuer)
+//                    .build())
+//            validate { credential ->
+//                if (credential.payload.getClaim("id").asString() != "") {
+//                    JWTPrincipal(credential.payload)
+//                } else {
+//                    null
+//                }
+//            }
+//            challenge { defaultSchema, realm ->
+//                call.respond(HttpStatusCode.Unauthorized, "Token is not valid or has expired")
+//            }
+//        }
+//    }
 
-    routing {
+
         post(Endpoint.Registration.str) {
             val ownerController = OwnerController()
             val regResponse = ownerController.registerOwner(call)
@@ -123,7 +128,7 @@ fun Application.ownerConfigure() {
 
         }
 
-    }
+
 
 
 }

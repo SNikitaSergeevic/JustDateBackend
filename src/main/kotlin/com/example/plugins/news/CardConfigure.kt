@@ -8,8 +8,8 @@ import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Application.cardConfigure() {
-    routing {
+fun Route.cardConfigure() {
+
         authenticate ("auth-jwt") {
             post(Endpoint.FetchCardsOnSex.str) {
                 try {
@@ -25,5 +25,5 @@ fun Application.cardConfigure() {
                 }
             }
         }
-    }
+
 }

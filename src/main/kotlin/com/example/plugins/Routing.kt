@@ -1,34 +1,64 @@
 package com.example.plugins
 
 
+import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
 import com.example.feauteres.controllers.ChatController
 import com.example.plugins.news.*
+import io.ktor.http.*
 import io.ktor.server.routing.*
 import io.ktor.server.response.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
+import org.koin.java.KoinJavaComponent.inject
+import org.koin.ktor.ext.inject
 
 
 fun Application.configureRouting() {
 
-//    configureRegistration() // V
-//    configureLogin() // V
-//    configureAuthorisation() // V
-//    configureUpdateModel() //V
-//    configureMatching() //V
+    val chatController by inject<ChatController>()
+
+    val secret = environment.config.property("jwt.secret").getString()
+    val issuer = environment.config.property("jwt.issuer").getString()
+    val audience = environment.config.property("jwt.audience").getString()
+    val myRealm = environment.config.property("jwt.realm").getString()
+
+    install(Authentication) {
+        jwt("auth-jwt") {
+            realm = myRealm
+            verifier(
+                JWT
+                    .require(Algorithm.HMAC256(secret))
+                    .withAudience(audience)
+                    .withIssuer(issuer)
+                    .build())
+            validate { credential ->
+                if (credential.payload.getClaim("id").asString() != "") {
+                    JWTPrincipal(credential.payload)
+                } else {
+                    null
+                }
+            }
+            challenge { defaultSchema, realm ->
+                call.respond(HttpStatusCode.Unauthorized, "Token is not valid or has expired")
+            }
+        }
+    }
 
     //TODO: News
-    ownerConfigure()
-    cardConfigure()
-    imageConfigure()
-    matchConfigure()
-    tagConfigure()
-
-
-
-    configureSockets()
-
+    install(Routing) {
+        ownerConfigure(
+            secret = secret,
+            issuer = issuer,
+            audience = audience,
+            myRealm = myRealm
+        )
+        cardConfigure()
+        imageConfigure()
+        matchConfigure()
+        tagConfigure()
+    }
 
 
     routing {
@@ -43,54 +73,6 @@ fun Application.configureRouting() {
                 val id = principal?.get("oid")
                 call.respondText("Token for $id expires at $expiresAt.")
             }
-//            get(Endpoint.GetImages.str) {
-//                val imageid = call.parameters["imageId"]!!
-//                val file = ImagesController().getImages(imageid)
-//
-//                if (file != null) {
-//                    var images = byteArrayOf()
-//                    val im = file.forEach{item ->
-//                        images += item.readBytes()
-//
-//                    }
-//                    println("BBB ${images.indices}")
-//                    println(images.toString())
-//                    call.respondBytes(images)
-//                } else {
-//                    call.respond(HttpStatusCode.NotFound)
-//                }
-//            }
-//
-//            get(Endpoint.GetImage.str) {
-//                val userspublicid = call.parameters["userspublicid"]!!
-//                val imageid = call.parameters["imageid"]!!
-//                var file = ImagesController().getImage(userspublicid, imageid)
-//                call.respondBytes(file!!.readBytes()!!)
-//            }
-//
-//            get(Endpoint.GetImagesIdWithUserspublicid.str) {
-//                val userspublicid = call.parameters["userpublicid"]!!
-//                val imagesIds = ImagesController().getIdAllImagesOfUser(userspublicid)
-//
-//                if (imagesIds != null) {
-//                    call.respond(imagesIds)
-//                } else {
-//                    call.respond(HttpStatusCode.NotFound)
-//                }
-//
-//
-//            }
-//
-//            post(Endpoint.FetchOwner.str) {
-//                val ownerController = OwnerRemoteController(call)
-//                val owner = ownerController.fetchOwner()
-//
-//                if (owner != null) {
-//                    call.respond(owner)
-//                } else {
-//                    call.respond(HttpStatusCode.NotFound)
-//                }
-//            }
         }
     }
 }

@@ -5,6 +5,7 @@ val postgres_version : String by project
 val h2_version : String by project
 val exposed_version : String by project
 val swagger_codegen_version: String by project
+val koin_version : String by project
 
 plugins {
     kotlin("jvm") version "1.9.0"
@@ -46,6 +47,10 @@ dependencies {
     implementation("io.ktor:ktor-network-tls-certificates:$ktor_version")
     implementation("io.ktor:ktor-server-auth:$ktor_version")
     implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
+
+    implementation("io.insert-koin:koin-core:$koin_version")
+    implementation("io.insert-koin:koin-ktor:$koin_version")
+    implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
 
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")

@@ -1,6 +1,8 @@
 package com.example
 
 
+import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -8,9 +10,16 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.network.tls.certificates.*
 import com.example.plugins.*
+import io.ktor.http.*
+import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
+import org.koin.core.Koin
+import org.koin.ktor.ext.*
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.*
+import com.example.mainModule
+
 
 //fun main() {
 //
@@ -46,10 +55,16 @@ import java.io.*
 //}
 
 
-fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
+fun main(args: Array<String>): Unit = EngineMain.main(args)
 
+@Suppress("unused")
 fun Application.module() {
 
+//    install(Koin) {
+//        modules(mainModule)
+//    }
+
+    configureSockets()
     configureSerialization()
     configureDatabases()
 //    configureHTTP()  //swagger config

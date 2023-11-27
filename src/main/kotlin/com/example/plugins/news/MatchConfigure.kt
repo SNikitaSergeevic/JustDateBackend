@@ -15,8 +15,8 @@ import io.ktor.server.routing.*
 import java.util.*
 
 
-fun Application.matchConfigure() {
-    routing {
+fun Route.matchConfigure() {
+
         authenticate("auth-jwt") {
 
 
@@ -124,7 +124,7 @@ fun Application.matchConfigure() {
             }
 
         }
-    }
+
 }
 
 
