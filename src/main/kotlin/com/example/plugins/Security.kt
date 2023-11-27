@@ -15,7 +15,7 @@ fun Application.configureSecurity() {
 //        cookie<MySession>("MY_SESSION") {
 //            cookie.extensions["SameSite"] = "lax"
 //        }
-        cookie<ChatReceiveRemote>("SESSION")
+//        cookie<ChatReceiveRemote>("SESSION")
     }
 
     intercept(Plugins) {
