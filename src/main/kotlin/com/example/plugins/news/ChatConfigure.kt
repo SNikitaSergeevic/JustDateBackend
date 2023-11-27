@@ -5,6 +5,7 @@ import com.example.feauteres.controllers.MemberAlreadyExistException
 import com.example.feauteres.model.ChatReceiveRemote
 import com.example.feauteres.model.ChatResponse
 import com.example.feauteres.model.MessageReceiveRemote
+import com.example.feauteres.model.SessionData
 import com.example.plugins.Endpoint
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -56,7 +57,7 @@ fun Route.chatConfigure(chatController: ChatController) {
         webSocket("/auth/chat") {
             println("\n ==== START! \n")
 
-            val chat = call.sessions.get<ChatReceiveRemote>()
+            val chat = call.sessions.get<SessionData>()
             if (chat == null) {
                 close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "no session"))
                 return@webSocket
