@@ -60,9 +60,7 @@ fun main(args: Array<String>): Unit = EngineMain.main(args)
 
 fun Application.module() {
 
-//    install(Koin) {
-//        modules(mainModule)
-//    }
+
 
     configureSockets()
     configureRouting()
@@ -72,7 +70,7 @@ fun Application.module() {
 
 
 
-//    configureSecurity()
+    configureSecurity()
 }
 
 /*
