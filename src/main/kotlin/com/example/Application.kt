@@ -13,12 +13,11 @@ import com.example.plugins.*
 import io.ktor.http.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
-import org.koin.core.Koin
-import org.koin.ktor.ext.*
+//import org.koin.core.Koin
+//import org.koin.ktor.ext.*
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.*
-import com.example.mainModule
 
 
 //fun main() {

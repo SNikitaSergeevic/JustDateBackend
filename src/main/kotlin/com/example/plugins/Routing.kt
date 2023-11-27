@@ -11,13 +11,15 @@ import io.ktor.server.response.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
-import org.koin.java.KoinJavaComponent.inject
-import org.koin.ktor.ext.inject
+//import org.koin.java.KoinJavaComponent.inject
+//import org.koin.ktor.ext.inject
 
 
 fun Application.configureRouting() {
 
-    val chatController by inject<ChatController>()
+//    val chatController by inject<ChatController>()
+
+    val chatController = ChatController()
 
     val secret = environment.config.property("jwt.secret").getString()
     val issuer = environment.config.property("jwt.issuer").getString()
