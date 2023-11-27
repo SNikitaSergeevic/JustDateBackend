@@ -84,7 +84,7 @@ fun Route.chatConfigure(chatController: ChatController) {
                 println("\n ==== 3 \n")
                 call.respond(HttpStatusCode.Conflict)
             } catch (e: Exception) {
-                println("\n ==== 4 \n")
+                println("\n ==== 4 $e\n")
                 e.printStackTrace()
             } finally {
                 println("\n ==== 5 \n")
