@@ -58,6 +58,7 @@ fun Application.configureRouting() {
         imageConfigure()
         matchConfigure()
         tagConfigure()
+        chatConfigure(chatController)
     }
 
 
