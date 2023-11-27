@@ -13,6 +13,7 @@ import com.example.plugins.*
 import io.ktor.http.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
+import io.ktor.server.websocket.*
 //import org.koin.core.Koin
 //import org.koin.ktor.ext.*
 import org.slf4j.LoggerFactory
@@ -68,7 +69,7 @@ fun Application.module() {
 //    configureHTTP()  //swagger config
 
 
-
+install(WebSockets)
 //    configureSecurity()
 }
 
