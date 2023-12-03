@@ -11,6 +11,7 @@ import java.util.UUID
 
 //TODO: ChatModel
 
+@Serializable
 data class SessionData(
     val ownerID: String,
     val companionID: String
