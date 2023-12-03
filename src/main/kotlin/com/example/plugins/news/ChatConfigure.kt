@@ -64,6 +64,9 @@ fun Route.chatConfigure(chatController: ChatController) {
 //            val chat = call.sessions.get<SessionData>()
             val startFrame = Frame.toString()
             val chat = Json.decodeFromString<SessionData>(startFrame)
+            val ownerID = call.parameters["ownerID"] ?: "null"
+            val companionID = call.parameters["companionID"] ?: "null"
+
 
             if (chat == null) {
                 close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "no session"))
@@ -74,15 +77,15 @@ fun Route.chatConfigure(chatController: ChatController) {
             try {
                 println("\n ==== 2 \n")
                 chatController.onJoinChat(
-                    ownerID = chat.ownerID,
-                    companionID = chat.companionID,
+                    ownerID = ownerID,
+                    companionID = companionID,
                     socket = this
                 )
                 incoming.consumeEach { frame ->
                     if(frame is Frame.Text) {
                         chatController.sendMessageT(
-                            ownerID = UUID.fromString(chat.ownerID),
-                            companionID = UUID.fromString(chat.companionID),
+                            ownerID = UUID.fromString(ownerID),
+                            companionID = UUID.fromString(companionID),
                             messageJson = frame.readText()
                         )
                     }
