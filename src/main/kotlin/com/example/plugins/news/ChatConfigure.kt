@@ -24,7 +24,10 @@ fun Route.chatConfigure(chatController: ChatController) {
 
     authenticate("auth-jwt") {
         webSocket("/auth/talk") { // websocketSession
+
+            println(call.parameters)
             for (frame in incoming) {
+
                 if (frame is Frame.Text) {
                     val text = frame.readText()
                     outgoing.send(Frame.Text("YOU SAID: $text"))
