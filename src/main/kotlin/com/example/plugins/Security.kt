@@ -20,23 +20,25 @@ fun Application.configureSecurity() {
 
     }
 
-    intercept(Plugins) {
-        val session = call.sessions.get<SessionData>()
-        if(session == null) {
-//            val username = call.parameters["username"] ?: "Guest"
-//            call.sessions.set(ChatSession(username, generateNonce()))
-            println("\n ==== SessionNotExist === \n")
-            val ownerID = call.parameters["ownerID"].toString()
-            val companionID = call.parameters["companionID"].toString()
+//    intercept(Plugins) {
+//        val session = call.sessions.get<SessionData>()
+//        if(session == null) {
+////            val username = call.parameters["username"] ?: "Guest"
+////            call.sessions.set(ChatSession(username, generateNonce()))
+//            println("\n ==== SessionNotExist === \n")
+//            val ownerID = call.parameters["ownerID"].toString()
+//            val companionID = call.parameters["companionID"].toString()
+//
+//            call.sessions.set(SessionData(ownerID, companionID))
+//
+//        } else {
+//            println("\n ==== SessionExist === \n")
+//            val chat = call.receive<SessionData>()
+//            call.sessions.set(chat)
+//        }
+//    }
 
-            call.sessions.set(SessionData(ownerID, companionID))
 
-        } else {
-            println("\n ==== SessionExist === \n")
-            val chat = call.receive<SessionData>()
-            call.sessions.set(chat)
-        }
-    }
 //    routing {
 //        get("/session/increment") {
 //                val session = call.sessions.get<MySession>() ?: MySession()
