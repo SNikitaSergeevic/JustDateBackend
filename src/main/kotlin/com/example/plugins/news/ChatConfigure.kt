@@ -62,8 +62,8 @@ fun Route.chatConfigure(chatController: ChatController) {
             println("\n ==== START! \n")
 
 //            val chat = call.sessions.get<SessionData>()
-            val startFrame = Frame.toString()
-            val chat = Json.decodeFromString<SessionData>(startFrame)
+//            val startFrame = Frame.toString()
+//            val chat = Json.decodeFromString<SessionData>(startFrame)
             val ownerID = call.parameters["ownerID"] ?: "null"
             val companionID = call.parameters["companionID"] ?: "null"
 
