@@ -68,7 +68,7 @@ fun Route.chatConfigure(chatController: ChatController) {
             val companionID = call.parameters["companionID"] ?: "null"
 
 
-            if (chat == null) {
+            if (ownerID == null) {
                 close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "no session"))
                 return@webSocket
             }
@@ -99,7 +99,7 @@ fun Route.chatConfigure(chatController: ChatController) {
                 e.printStackTrace()
             } finally {
                 println("\n ==== 5 \n")
-                chatController.tryDisconnect(chat.ownerID)
+                chatController.tryDisconnect(ownerID)
             }
             println("\n ==== 6 \n")
         }
