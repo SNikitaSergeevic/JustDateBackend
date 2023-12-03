@@ -16,6 +16,8 @@ import io.ktor.server.websocket.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.Json.Default.decodeFromString
+import kotlinx.serialization.json.JsonDecoder
 import java.util.*
 
 fun Route.chatConfigure(chatController: ChatController) {
@@ -56,7 +58,10 @@ fun Route.chatConfigure(chatController: ChatController) {
         webSocket("/auth/chat/{ownerID}/{companionID}") {
             println("\n ==== START! \n")
 
-            val chat = call.sessions.get<SessionData>()
+//            val chat = call.sessions.get<SessionData>()
+            val startFrame = Frame.toString()
+            val chat = Json.decodeFromString<SessionData>(startFrame)
+
             if (chat == null) {
                 close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "no session"))
                 return@webSocket
