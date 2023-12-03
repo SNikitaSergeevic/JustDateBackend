@@ -25,7 +25,7 @@ fun Route.chatConfigure(chatController: ChatController) {
     authenticate("auth-jwt") {
         webSocket("/auth/talk") { // websocketSession
 
-            println("\n START print for talk ${call.parameters} \n")
+            println("\n START print for talk ${incoming.receive()} \n")
             for (frame in incoming) {
 
                 if (frame is Frame.Text) {
