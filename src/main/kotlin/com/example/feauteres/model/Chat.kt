@@ -75,6 +75,24 @@ object ChatModel: Table("chat")  { // chat not exist in DB
         }
     }
 
+    fun fetchOwnerChats(ownerID: UUID): List<ChatDTO>? {
+        return try {
+            transaction {
+                val chats = ChatModel.select {ChatModel.ownerID eq ownerID}
+                chats.map {
+                    ChatDTO(
+                        id = it[ChatModel.id],
+                        ownerID = it[ChatModel.ownerID],
+                        companionID = it[ChatModel.companionID],
+                        createdAt = it[ChatModel.createdAt]
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     fun fetchOnChatID(chatID: UUID): ChatDTO? {
         return try {
             transaction {

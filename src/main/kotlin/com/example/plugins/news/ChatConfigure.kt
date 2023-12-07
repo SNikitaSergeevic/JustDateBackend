@@ -2,10 +2,14 @@ package com.example.plugins.news
 
 import com.example.feauteres.controllers.ChatController
 import com.example.feauteres.controllers.MemberAlreadyExistException
+import com.example.feauteres.model.ChatModel
 import com.example.feauteres.model.ChatResponse
 import com.example.feauteres.model.MessageReceiveRemote
 import com.example.feauteres.model.SessionData
 import com.example.plugins.Endpoint
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.websocket.*
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -14,13 +18,18 @@ import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
+import io.ktor.serialization.kotlinx.*
 import kotlinx.coroutines.channels.consumeEach
-import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.*
 import kotlinx.serialization.json.Json.Default.decodeFromString
 import kotlinx.serialization.json.JsonDecoder
 import java.util.*
 
 fun Route.chatConfigure(chatController: ChatController) {
+
+
+
+
 
     authenticate("auth-jwt") {
         webSocket("/auth/talk") { // websocketSession
@@ -55,7 +64,10 @@ fun Route.chatConfigure(chatController: ChatController) {
 
             val receive = incoming.receive()
 
+
         }
+
+
 
 
         webSocket("/auth/chat/{ownerID}/{companionID}") {
@@ -66,42 +78,50 @@ fun Route.chatConfigure(chatController: ChatController) {
 //            val chat = Json.decodeFromString<SessionData>(startFrame)
             val ownerID = call.parameters["ownerID"] ?: "null"
             val companionID = call.parameters["companionID"] ?: "null"
+            chatController.getChats(UUID.fromString(ownerID))
 
-
-            if (ownerID == null) {
+            if (ownerID == "null") {
                 close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "no session"))
                 return@webSocket
             }
 
             println("\n ==== 1 \n")
-            try {
-                println("\n ==== 2 \n")
-                chatController.onJoinChat(
-                    ownerID = ownerID,
-                    companionID = companionID,
-                    socket = this
-                )
-                incoming.consumeEach { frame ->
-                    if(frame is Frame.Text) {
-                        chatController.sendMessageT(
-                            ownerID = UUID.fromString(ownerID),
-                            companionID = UUID.fromString(companionID),
-                            messageJson = frame.readText()
-                        )
-                    }
+            val chat = ChatModel.fetch(UUID.fromString(ownerID), UUID.fromString(companionID))
 
-                }
-            } catch(e: MemberAlreadyExistException) {
-                println("\n ==== 3 \n")
-                call.respond(HttpStatusCode.Conflict)
-            } catch (e: Exception) {
-                println("\n ==== 4 $e\n")
-                e.printStackTrace()
-            } finally {
-                println("\n ==== 5 \n")
-                chatController.tryDisconnect(ownerID)
-            }
-            println("\n ==== 6 \n")
+
+
+
+
+
+
+//            try {
+//                println("\n ==== 2 \n")
+//                chatController.onJoinChat(
+//                    ownerID = ownerID,
+//                    companionID = companionID,
+//                    socket = this
+//                )
+//                incoming.consumeEach { frame ->
+//                    if(frame is Frame.Text) {
+//                        chatController.sendMessageT(
+//                            ownerID = UUID.fromString(ownerID),
+//                            companionID = UUID.fromString(companionID),
+//                            messageJson = frame.readText()
+//                        )
+//                    }
+//
+//                }
+//            } catch(e: MemberAlreadyExistException) {
+//                println("\n ==== 3 \n")
+//                call.respond(HttpStatusCode.Conflict)
+//            } catch (e: Exception) {
+//                println("\n ==== 4 $e\n")
+//                e.printStackTrace()
+//            } finally {
+//                println("\n ==== 5 \n")
+//                chatController.tryDisconnect(ownerID)
+//            }
+//            println("\n ==== 6 \n")
         }
 
         get(Endpoint.GetChat.str) {
@@ -127,5 +147,5 @@ fun Route.chatConfigure(chatController: ChatController) {
 
         }
 
+        }
     }
-}

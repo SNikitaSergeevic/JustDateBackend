@@ -1,7 +1,12 @@
 package com.example.feauteres.controllers
 
 import com.example.feauteres.model.*
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.websocket.*
+import io.ktor.http.*
 import io.ktor.serialization.*
+import io.ktor.server.websocket.WebSockets
 import java.time.LocalDate
 import java.util.*
 import io.ktor.websocket.*
@@ -19,6 +24,7 @@ class ChatController() {
 
 
     private val members = ConcurrentHashMap <String, ChatSocketSession>()
+    private val client = HttpClient(CIO)
 
     fun onJoinChat(ownerID: String, companionID: String, socket: WebSocketSession) {
 //            sessionID this chat.ownerID
@@ -39,6 +45,13 @@ class ChatController() {
             members[ownerID] = chatSocketSession
         }
 
+    }
+
+    suspend fun getChats(ownerID: UUID) {
+        client.webSocket(method = HttpMethod.Get, host = "", port = 8443, path = "/check/work") {
+            val chat = receiveDeserialized<ChatResponse>()
+            println("\n receive = $chat \n")
+        }
     }
 
     suspend fun sendMessageT(ownerID: UUID, companionID: UUID, messageJson: String) {
