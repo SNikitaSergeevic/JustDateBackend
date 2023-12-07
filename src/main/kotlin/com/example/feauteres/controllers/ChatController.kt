@@ -47,8 +47,8 @@ class ChatController() {
 
     }
 
-    suspend fun getChats(ownerID: UUID) {
-        client.webSocket(method = HttpMethod.Get, host = "", port = 8443, path = "/check/work") {
+    suspend fun getChats() {
+        client.webSocket(method = HttpMethod.Get, host = "0.0.0.0", port = 8443, path = "/check/work") {
             val chat = receiveDeserialized<ChatResponse>()
             println("\n receive = $chat \n")
         }

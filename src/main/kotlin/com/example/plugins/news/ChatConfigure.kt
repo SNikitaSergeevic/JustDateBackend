@@ -67,7 +67,9 @@ fun Route.chatConfigure(chatController: ChatController) {
 
         }
 
-
+        webSocket {
+            chatController.getChats()
+        }
 
 
         webSocket("/auth/chat/{ownerID}/{companionID}") {
@@ -78,7 +80,7 @@ fun Route.chatConfigure(chatController: ChatController) {
 //            val chat = Json.decodeFromString<SessionData>(startFrame)
             val ownerID = call.parameters["ownerID"] ?: "null"
             val companionID = call.parameters["companionID"] ?: "null"
-            chatController.getChats(UUID.fromString(ownerID))
+
 
             if (ownerID == "null") {
                 close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "no session"))
