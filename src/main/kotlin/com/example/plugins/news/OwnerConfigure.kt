@@ -12,7 +12,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import java.util.*
 
-fun Route.ownerConfigure(
+fun Application.ownerConfigure(
     secret: String,
     issuer: String,
     audience: String,
@@ -46,7 +46,7 @@ fun Route.ownerConfigure(
 //        }
 //    }
 
-
+    routing {
         post(Endpoint.Registration.str) {
             val ownerController = OwnerController()
             val regResponse = ownerController.registerOwner(call)
@@ -127,8 +127,7 @@ fun Route.ownerConfigure(
             }
 
         }
-
-
+    }
 
 
 }

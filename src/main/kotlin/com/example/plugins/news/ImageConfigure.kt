@@ -10,9 +10,9 @@ import io.ktor.server.auth.*
 import io.ktor.server.request.*
 
 
-fun Route.imageConfigure() {
+fun Application.imageConfigure() {
 
-
+    routing {
         authenticate("auth-jwt") {
             get(Endpoint.GetImages.str) {
                 val imageID = call.parameters["imageID"]!!
@@ -20,7 +20,7 @@ fun Route.imageConfigure() {
 
                 if (file != null) {
                     var images = byteArrayOf()
-                    file.forEach{item ->
+                    file.forEach { item ->
                         images += item.readBytes()
                     }
                     call.respondBytes(images)
@@ -54,6 +54,6 @@ fun Route.imageConfigure() {
             }
 
         }
-
+    }
 
 }

@@ -15,8 +15,9 @@ import io.ktor.server.routing.*
 import java.util.*
 
 
-fun Route.matchConfigure() {
+fun Application.matchConfigure() {
 
+    routing {
         authenticate("auth-jwt") {
 
 
@@ -85,16 +86,18 @@ fun Route.matchConfigure() {
 
 
                     if (match != null) {
-                        call.respond(HttpStatusCode.Accepted, MatchResponse(
-                            id = match.id.toString(),
-                            cardIdSender = match.cardIdSender.toString(),
-                            cardIdRecipient = match.cardIdRecipient.toString(),
-                            recipientShow = match.recipientShow,
-                            senderShow = match.senderShow,
-                            match = match.match,
-                            idSender = match.idSender.toString(),
-                            idRecipient = match.idRecipient.toString()
-                        ))
+                        call.respond(
+                            HttpStatusCode.Accepted, MatchResponse(
+                                id = match.id.toString(),
+                                cardIdSender = match.cardIdSender.toString(),
+                                cardIdRecipient = match.cardIdRecipient.toString(),
+                                recipientShow = match.recipientShow,
+                                senderShow = match.senderShow,
+                                match = match.match,
+                                idSender = match.idSender.toString(),
+                                idRecipient = match.idRecipient.toString()
+                            )
+                        )
                     } else {
                         call.respond(HttpStatusCode.NotFound)
                     }
@@ -124,6 +127,7 @@ fun Route.matchConfigure() {
             }
 
         }
+    }
 
 }
 

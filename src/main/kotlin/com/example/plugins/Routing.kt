@@ -55,20 +55,26 @@ fun Application.configureRouting() {
     }
 
     //TODO: News
-    install(Routing) {
-        ownerConfigure(
-            secret = secret,
-            issuer = issuer,
-            audience = audience,
-            myRealm = myRealm
-        )
-        cardConfigure()
-        imageConfigure()
-        matchConfigure()
-        tagConfigure()
-        chatConfigure(chatController)
-    }
+//    install(Routing) {
+//        ownerConfigure(
+//            secret = secret,
+//            issuer = issuer,
+//            audience = audience,
+//            myRealm = myRealm
+//        )
+//        cardConfigure()
+//        imageConfigure()
+//        matchConfigure()
+//        tagConfigure()
+////        chatConfigure(chatController)
+//    }
 
+    ownerConfigure(secret, issuer, audience, myRealm)
+    cardConfigure()
+    imageConfigure()
+    matchConfigure()
+    tagConfigure()
+    chatConfigure(chatController)
 
     routing {
 

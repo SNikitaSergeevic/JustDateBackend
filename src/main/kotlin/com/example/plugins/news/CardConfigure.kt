@@ -8,9 +8,9 @@ import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.cardConfigure() {
-
-        authenticate ("auth-jwt") {
+fun Application.cardConfigure() {
+    routing {
+        authenticate("auth-jwt") {
             post(Endpoint.FetchCardsOnSex.str) {
                 try {
                     val cardController = CardController()
@@ -25,5 +25,6 @@ fun Route.cardConfigure() {
                 }
             }
         }
+    }
 
 }
