@@ -27,10 +27,6 @@ import java.util.*
 
 fun Route.chatConfigure(chatController: ChatController) {
 
-
-
-
-
     authenticate("auth-jwt") {
         webSocket("/auth/talk") { // websocketSession
 
@@ -46,31 +42,6 @@ fun Route.chatConfigure(chatController: ChatController) {
                 }
             }
         }
-
-        webSocket("/auth/sendMessage") { // websocketSession
-
-            for (frame in incoming) {
-                if (frame is Frame.Text) {
-                    val text = frame.readText()
-                    val receiveMessage = Json.decodeFromString<MessageReceiveRemote>(text)
-                    outgoing.send(Frame.Text("YOU SAID: $text"))
-                    if (text.equals("bye", ignoreCase = true)) {
-                        close(CloseReason(CloseReason.Codes.NORMAL, "Client said BYE"))
-                    }
-//                        val receiveMessage = receiveDeserialized<MessageReceiveRemote>()
-                    println("message: ${receiveMessage.text} \n sender: ${receiveMessage.senderID} \n recipient: ${receiveMessage.recipientID}")
-                }
-            }
-
-            val receive = incoming.receive()
-
-
-        }
-
-        webSocket {
-            chatController.getChats()
-        }
-
 
         webSocket("/auth/chat/{ownerID}/{companionID}") {
             println("\n ==== START! \n")
@@ -90,40 +61,6 @@ fun Route.chatConfigure(chatController: ChatController) {
             println("\n ==== 1 \n")
             val chat = ChatModel.fetch(UUID.fromString(ownerID), UUID.fromString(companionID))
 
-
-
-
-
-
-
-//            try {
-//                println("\n ==== 2 \n")
-//                chatController.onJoinChat(
-//                    ownerID = ownerID,
-//                    companionID = companionID,
-//                    socket = this
-//                )
-//                incoming.consumeEach { frame ->
-//                    if(frame is Frame.Text) {
-//                        chatController.sendMessageT(
-//                            ownerID = UUID.fromString(ownerID),
-//                            companionID = UUID.fromString(companionID),
-//                            messageJson = frame.readText()
-//                        )
-//                    }
-//
-//                }
-//            } catch(e: MemberAlreadyExistException) {
-//                println("\n ==== 3 \n")
-//                call.respond(HttpStatusCode.Conflict)
-//            } catch (e: Exception) {
-//                println("\n ==== 4 $e\n")
-//                e.printStackTrace()
-//            } finally {
-//                println("\n ==== 5 \n")
-//                chatController.tryDisconnect(ownerID)
-//            }
-//            println("\n ==== 6 \n")
         }
 
         get(Endpoint.GetChat.str) {
@@ -151,3 +88,84 @@ fun Route.chatConfigure(chatController: ChatController) {
 
         }
     }
+
+
+fun Application.chatConfigure(chatController: ChatController) {
+
+
+
+    routing {
+        authenticate("auth-jwt") {
+            webSocket("/auth/talk") { // websocketSession
+
+                println("\n START print for talk ${incoming.receive()} \n")
+                for (frame in incoming) {
+
+                    if (frame is Frame.Text) {
+                        val text = frame.readText()
+                        outgoing.send(Frame.Text("YOU SAID: $text"))
+                        if (text.equals("bye", ignoreCase = true)) {
+                            close(CloseReason(CloseReason.Codes.NORMAL, "Client said BYE"))
+                        }
+                    }
+                }
+            }
+
+            webSocket("/auth/chat/{myID}/{companionID}") {
+                println("\n ==== START! \n")
+                val myID = call.parameters["myID"]
+                val companionID = call.parameters["companionID"]
+                val companionSessionID = "$companionID-$myID"
+                val meSessionID = "$myID-$companionID"
+
+                val miConnect = chatController.getConnection(myID, companionID)
+
+
+                try {
+                    while (true) {
+                        when (val frame = incoming.receive()) {
+                            is Frame.Text -> {
+                                val message = Json.decodeFromString<MessageReceiveRemote>(frame.readText())
+                                chatController.sendMessage(message, myID, companionID)
+                            }
+                            else -> TODO()
+                        }
+                    }
+                } catch (e: Exception) {
+                    println(e.localizedMessage)
+                } finally {
+                    chatController.removeConnection(myID, companionID)
+                }
+
+
+
+            }
+
+            get(Endpoint.GetChat.str) {
+                val ownerID = call.parameters["ownerID"]
+                val companionID = call.parameters["companionID"]
+
+                try {
+                    val chat = chatController.getChat(UUID.fromString(ownerID), UUID.fromString(companionID))
+                    if (chat != null) {
+                        call.respond(
+                            HttpStatusCode.Accepted,
+                            ChatResponse(
+                                id = chat.id.toString(),
+                                ownerID = chat.ownerID.toString(),
+                                companionID = chat.companionID.toString()
+                            )
+                        )
+                    }
+                } catch (e: Exception) {
+                    call.respond(HttpStatusCode.Conflict, e)
+                }
+
+
+            }
+
+        }
+    }
+}
+
+

@@ -18,13 +18,50 @@ import java.util.concurrent.ConcurrentHashMap
 
 class MemberAlreadyExistException: Exception ("There is already a member with that chatID in the room.")
 
-
+class Connection(s: DefaultWebSocketSession) {
+    val session = s
+}
 
 class ChatController() {
 
 
     private val members = ConcurrentHashMap <String, ChatSocketSession>()
     private val client = HttpClient(CIO)
+    private var connections = Collections.synchronizedMap<String, Connection>(LinkedHashMap())
+
+    // TODO: WS controls
+
+    fun createConnection(idOne: String?, idTwo: String?, session: DefaultWebSocketSession): Connection {
+        connections["$idOne-$idTwo"] = Connection(session)
+        return connections["$idOne-$idTwo"]!!
+    }
+
+    fun getConnection(idOne: String?, idTwo: String?): Connection? {
+        return connections["$idOne-$idTwo"]
+    }
+
+    fun removeConnection(idOne: String?, idTwo: String?) {
+        connections.remove("$idOne-$idTwo")
+    }
+
+    // TODO: Message controls
+
+    suspend fun sendMessage(message: MessageReceiveRemote, idOne: String?, idTwo: String?) {
+        println("\n ${message.text} \n")
+        val s1 = connections["$idOne-$idTwo"]
+        val s2 = connections["$idTwo-$idOne"]
+
+        if (s1 != null) {
+            s1.session.send(message.text)
+        }
+
+        if (s2 != null) {
+            s2.session.send(message.text)
+        }
+
+    }
+
+
 
     fun onJoinChat(ownerID: String, companionID: String, socket: WebSocketSession) {
 //            sessionID this chat.ownerID
@@ -53,6 +90,10 @@ class ChatController() {
             println("\n receive = $chat \n")
         }
     }
+
+
+
+
 
     suspend fun sendMessageT(ownerID: UUID, companionID: UUID, messageJson: String) {
         val messageReceiveRemote = Json.decodeFromString<MessageReceiveRemote>(messageJson)
