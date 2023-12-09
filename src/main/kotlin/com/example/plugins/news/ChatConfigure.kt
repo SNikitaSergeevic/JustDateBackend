@@ -118,8 +118,7 @@ fun Application.chatConfigure(chatController: ChatController) {
                 val companionSessionID = "$companionID-$myID"
                 val meSessionID = "$myID-$companionID"
 
-                val miConnect = chatController.getConnection(myID, companionID)
-
+                val miConnect = chatController.createConnection(myID, companionID, this)
 
                 try {
                     while (true) {
