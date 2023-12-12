@@ -92,8 +92,6 @@ import java.util.*
 
 fun Application.chatConfigure(chatController: ChatController) {
 
-
-
     routing {
         authenticate("auth-jwt") {
             webSocket("/auth/talk") { // websocketSession
@@ -115,8 +113,8 @@ fun Application.chatConfigure(chatController: ChatController) {
                 println("\n ==== START! \n")
                 val myID = call.parameters["myID"]
                 val companionID = call.parameters["companionID"]
-                val companionSessionID = "$companionID-$myID"
-                val meSessionID = "$myID-$companionID"
+                val companionSessionID = chatController.getChat(UUID.fromString(companionID), UUID.fromString(myID))?.id
+                val meSessionID = chatController.getChat(UUID.fromString(myID), UUID.fromString(companionID))?.id
 
                 val miConnect = chatController.createConnection(myID, companionID, this)
 
@@ -125,7 +123,7 @@ fun Application.chatConfigure(chatController: ChatController) {
                         when (val frame = incoming.receive()) {
                             is Frame.Text -> {
                                 val message = Json.decodeFromString<MessageReceiveRemote>(frame.readText())
-                                chatController.sendMessage(message, myID, companionID)
+                                chatController.sendMessage(message, meSessionID.toString(), companionSessionID.toString())
                             }
                             else -> TODO()
                         }
@@ -135,9 +133,6 @@ fun Application.chatConfigure(chatController: ChatController) {
                 } finally {
                     chatController.removeConnection(myID, companionID)
                 }
-
-
-
             }
 
             get(Endpoint.GetChat.str) {

@@ -5,8 +5,6 @@ import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.http.*
-import io.ktor.serialization.*
-import io.ktor.server.websocket.WebSockets
 import java.time.LocalDate
 import java.util.*
 import io.ktor.websocket.*
@@ -18,8 +16,9 @@ import java.util.concurrent.ConcurrentHashMap
 
 class MemberAlreadyExistException: Exception ("There is already a member with that chatID in the room.")
 
-class Connection(s: DefaultWebSocketSession) {
+class Connection(s: DefaultWebSocketSession, id: UUID) {
     val session = s
+    val id: UUID = id
 }
 
 class ChatController() {
@@ -31,32 +30,46 @@ class ChatController() {
 
     // TODO: WS controls
 
-    fun createConnection(idOne: String?, idTwo: String?, session: DefaultWebSocketSession): Connection {
-        connections["$idOne-$idTwo"] = Connection(session)
-        return connections["$idOne-$idTwo"]!!
+    fun createConnection(idOne: String?, idTwo: String?, session: DefaultWebSocketSession): Connection? {
+        val chat = getChat(UUID.fromString(idOne), UUID.fromString(idTwo))
+
+        return if (chat != null) {
+            val newConnection = Connection(session, chat.id)
+            connections[chat.id.toString()] = newConnection
+            newConnection
+        } else {
+            null
+        }
     }
 
     fun getConnection(idOne: String?, idTwo: String?): Connection? {
-        return connections["$idOne-$idTwo"]
+        val chat = getChat(UUID.fromString(idOne), UUID.fromString(idTwo))
+        return connections[chat!!.id.toString()]
     }
 
     fun removeConnection(idOne: String?, idTwo: String?) {
-        connections.remove("$idOne-$idTwo")
+        val chat = getChat(UUID.fromString(idOne), UUID.fromString(idTwo))
+        connections.remove(chat!!.id.toString())
     }
 
     // TODO: Message controls
 
-    suspend fun sendMessage(message: MessageReceiveRemote, idOne: String?, idTwo: String?) {
+    suspend fun sendMessage(message: MessageReceiveRemote, oneSessionID: String?, twoSessionID: String?) {
         println("\n ${message.text} \n")
-        val s1 = connections["$idOne-$idTwo"]
-        val s2 = connections["$idTwo-$idOne"]
+
+        val s1 = connections[oneSessionID]
+        val s2 = connections[twoSessionID]
 
         if (s1 != null) {
             s1.session.send(message.text)
+        } else {
+            println("ChatController fun sendMessage, s1 == null")
         }
 
         if (s2 != null) {
             s2.session.send(message.text)
+        } else {
+            println("ChatController fun sendMessage, s2 == null")
         }
 
     }
