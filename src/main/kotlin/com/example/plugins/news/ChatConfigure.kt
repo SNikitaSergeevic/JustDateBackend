@@ -120,6 +120,7 @@ fun Application.chatConfigure(chatController: ChatController) {
                 val meSessionID = chatController.getChat(UUID.fromString(myID), UUID.fromString(companionID))
 
                 if (companionSessionID == null || meSessionID == null) {
+                    println("\n not exist chat \n")
                     this.closeReason
                 }
 
