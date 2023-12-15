@@ -121,7 +121,7 @@ fun Application.chatConfigure(chatController: ChatController) {
 
                 if (companionSessionID == null || meSessionID == null) {
                     println("\n not exist chat \n")
-                    this.closeReason
+                    close(CloseReason(CloseReason.Codes.NORMAL, "not exist chat"))
                 }
 
                 val miConnect = chatController.createConnection(myID, companionID, this)
