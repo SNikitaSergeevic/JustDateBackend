@@ -42,39 +42,73 @@ class ChatController() {
         }
     }
 
-    fun getConnection(idOne: String?, idTwo: String?): Connection? {
-        val chat = getChat(UUID.fromString(idOne), UUID.fromString(idTwo))
-        return connections[chat!!.id.toString()]
-    }
-
     fun removeConnection(idOne: String?, idTwo: String?) {
         val chat = getChat(UUID.fromString(idOne), UUID.fromString(idTwo))
         connections.remove(chat!!.id.toString())
     }
 
-    // TODO: Message controls
+    fun getChat(ownerID: UUID, companionID: UUID): ChatDTO? {
+        return ChatModel.fetch(ownerID, companionID)
+    }
 
+    // TODO: Message controls
     suspend fun sendMessage(message: MessageReceiveRemote, oneSessionID: String?, twoSessionID: String?) {
         println("\n ${message.text} \n")
 
+        val now = LocalDate.now()
+
+        //todo: check and get connections
         val s1 = connections[oneSessionID]
         val s2 = connections[twoSessionID]
 
+        //todo: save messages in db
+        val messageDTOOneSession = MessageDTO (
+            id = UUID.randomUUID(),
+            chatID = UUID.fromString(oneSessionID),
+            senderID = UUID.fromString(message.senderID),
+            recipientID = UUID.fromString(message.recipientID),
+            text = message.text,
+            createdAt = now
+        )
+
+        val messageDTOTwoSession = MessageDTO (
+            id = UUID.randomUUID(),
+            chatID = UUID.fromString(twoSessionID),
+            senderID = UUID.fromString(message.senderID),
+            recipientID = UUID.fromString(message.recipientID),
+            text = message.text,
+            createdAt = now
+        )
+
+        MessageModel.create(messageDTOOneSession)
+        MessageModel.create(messageDTOTwoSession)
+
         if (s1 != null) {
             s1.session.send(message.text)
+            //FIXME save message in owner chat
+
         } else {
             println("ChatController fun sendMessage, s1 == null")
+            //FIXME append notification
         }
 
         if (s2 != null) {
             s2.session.send(message.text)
+            //FIXME save message in owner chat
         } else {
             println("ChatController fun sendMessage, s2 == null")
+            //FIXME append notification
         }
 
     }
 
 
+
+    //FIXME down is now use
+    fun getConnection(idOne: String?, idTwo: String?): Connection? {
+        val chat = getChat(UUID.fromString(idOne), UUID.fromString(idTwo))
+        return connections[chat!!.id.toString()]
+    }
 
     fun onJoinChat(ownerID: String, companionID: String, socket: WebSocketSession) {
 //            sessionID this chat.ownerID
@@ -103,10 +137,6 @@ class ChatController() {
             println("\n receive = $chat \n")
         }
     }
-
-
-
-
 
     suspend fun sendMessageT(ownerID: UUID, companionID: UUID, messageJson: String) {
         val messageReceiveRemote = Json.decodeFromString<MessageReceiveRemote>(messageJson)
@@ -186,9 +216,6 @@ class ChatController() {
         return ownerChatDTO
     }
 
-
-
-
     fun sendMessage(ownerID: UUID, companionID: UUID, text: String): MessageDTO? {
         val date = LocalDate.now()
         val ownerChat = ChatModel.fetch(ownerID, companionID)
@@ -229,9 +256,7 @@ class ChatController() {
         return MessageModel.fetchMessage(chatID)
     }
 
-    fun getChat(ownerID: UUID, companionID: UUID): ChatDTO? {
-        return ChatModel.fetch(ownerID, companionID)
-    }
+
 
 
 

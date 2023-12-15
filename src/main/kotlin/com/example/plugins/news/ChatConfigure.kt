@@ -97,8 +97,8 @@ fun Application.chatConfigure(chatController: ChatController) {
             webSocket("/auth/talk") { // websocketSession
 
                 println("\n START print for talk ${incoming.receive()} \n")
-                for (frame in incoming) {
 
+                for (frame in incoming) {
                     if (frame is Frame.Text) {
                         val text = frame.readText()
                         outgoing.send(Frame.Text("YOU SAID: $text"))
@@ -107,14 +107,17 @@ fun Application.chatConfigure(chatController: ChatController) {
                         }
                     }
                 }
+
             }
 
-            webSocket("/auth/chat/{myID}/{companionID}") {
-                println("\n ==== START! \n")
+            webSocket(Endpoint.ChatConnect.str) {
+                println("\n ChatConnect START! \n")
                 val myID = call.parameters["myID"]
                 val companionID = call.parameters["companionID"]
-                val companionSessionID = chatController.getChat(UUID.fromString(companionID), UUID.fromString(myID))?.id
-                val meSessionID = chatController.getChat(UUID.fromString(myID), UUID.fromString(companionID))?.id
+
+                //todo: Check existing chat for two users
+                val companionSessionID = chatController.getChat(UUID.fromString(companionID), UUID.fromString(myID))?.id ?: this.closeReason
+                val meSessionID = chatController.getChat(UUID.fromString(myID), UUID.fromString(companionID))?.id ?: this.closeReason
 
                 val miConnect = chatController.createConnection(myID, companionID, this)
 

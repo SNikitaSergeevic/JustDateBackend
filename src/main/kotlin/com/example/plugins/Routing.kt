@@ -118,7 +118,9 @@ enum class Endpoint(val str: String) {
     FetchExistMatchRecipientIDCheck("/auth/fetchExistMatchRecipientIDCheck/{id}"),
     UpdateMatch("/auth/updateMatch/{senCardID}/{recCardID}"),
     CreateMatch("/auth/createMatch"),
-    GetChat("/auth/getChat/{ownerID}/{companionID}")
+    //todo: chat
+    GetChat("/auth/getChat/{ownerID}/{companionID}"),
+    ChatConnect("/auth/chatConnect/{ownerID}/{companionID}")
 
 }
 
