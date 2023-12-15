@@ -119,10 +119,10 @@ fun Application.chatConfigure(chatController: ChatController) {
                 val companionSessionID = chatController.getChat(UUID.fromString(companionID), UUID.fromString(myID))
                 val meSessionID = chatController.getChat(UUID.fromString(myID), UUID.fromString(companionID))
 
-                if (companionSessionID == null || meSessionID == null) {
-                    println("\n not exist chat \n")
-                    close(CloseReason(CloseReason.Codes.NORMAL, "not exist chat"))
-                }
+//                if (companionSessionID == null || meSessionID == null) {
+//                    println("\n not exist chat \n")
+//                    close(CloseReason(CloseReason.Codes.NORMAL, "not exist chat"))
+//                }
 
                 val miConnect = chatController.createConnection(myID, companionID, this)
 
