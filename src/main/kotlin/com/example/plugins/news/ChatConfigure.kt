@@ -116,8 +116,12 @@ fun Application.chatConfigure(chatController: ChatController) {
                 val companionID = call.parameters["companionID"]
 
                 //todo: Check existing chat for two users
-                val companionSessionID = chatController.getChat(UUID.fromString(companionID), UUID.fromString(myID))?.id ?: this.closeReason
-                val meSessionID = chatController.getChat(UUID.fromString(myID), UUID.fromString(companionID))?.id ?: this.closeReason
+                val companionSessionID = chatController.getChat(UUID.fromString(companionID), UUID.fromString(myID))
+                val meSessionID = chatController.getChat(UUID.fromString(myID), UUID.fromString(companionID))
+
+                if (companionSessionID == null || meSessionID == null) {
+                    this.closeReason
+                }
 
                 val miConnect = chatController.createConnection(myID, companionID, this)
 

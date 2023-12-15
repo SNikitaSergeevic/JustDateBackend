@@ -88,7 +88,7 @@ class MatchController() {
             )
             ChatModel.create(chatOwnerIsRecipient)
             ChatModel.create(chatOwnerIsSender)
-            
+
             MatchResponse(
                 id = existMatchSenderIsRecipient.id.toString(),
                 cardIdSender = existMatchSenderIsRecipient.cardIdSender.toString(),
