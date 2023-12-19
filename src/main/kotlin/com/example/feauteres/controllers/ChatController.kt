@@ -9,6 +9,7 @@ import java.time.LocalDate
 import java.util.*
 import io.ktor.websocket.*
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.encodeToJsonElement
 import java.util.concurrent.ConcurrentHashMap
 
 
@@ -29,7 +30,6 @@ class ChatController() {
     private var connections = Collections.synchronizedMap<String, Connection>(LinkedHashMap())
 
     // TODO: WS controls
-
     fun createConnection(idOne: String?, idTwo: String?, session: DefaultWebSocketSession): Connection? {
         val chat = getChat(UUID.fromString(idOne), UUID.fromString(idTwo))
 
@@ -55,18 +55,30 @@ class ChatController() {
     suspend fun sendMessage(message: MessageReceiveRemote, oneSessionID: String?, twoSessionID: String?) {
         println("\n ${message.text} \n")
 
-        val now = LocalDate.now()
+        val now = java.util.Date().time
 
         //todo: check and get connections
         val s1 = connections[oneSessionID]
         val s2 = connections[twoSessionID]
 
-        //todo: save messages in db
+        println("\n ${message.chatID} ${message.senderID} ${message.recipientID} ${message.text}\n")
+        println("\n oneSessionID - $oneSessionID , twoSessionID - $twoSessionID ")
+
+        //todo: save messages in db, and convert for respond
         val messageDTOOneSession = MessageDTO (
             id = UUID.randomUUID(),
             chatID = UUID.fromString(oneSessionID),
             senderID = UUID.fromString(message.senderID),
             recipientID = UUID.fromString(message.recipientID),
+            text = message.text,
+            createdAt = now
+        )
+        MessageModel.create(messageDTOOneSession)
+        val messageForS1 = MessageResponseRemote(
+            id = messageDTOOneSession.id.toString(),
+            chatID = messageDTOOneSession.chatID.toString(),
+            senderID = messageDTOOneSession.senderID.toString(),
+            recipientID = messageDTOOneSession.recipientID.toString(),
             text = message.text,
             createdAt = now
         )
@@ -79,22 +91,27 @@ class ChatController() {
             text = message.text,
             createdAt = now
         )
-
-        MessageModel.create(messageDTOOneSession)
         MessageModel.create(messageDTOTwoSession)
+        val messageForS2 = MessageResponseRemote(
+            id = messageDTOTwoSession.id.toString(),
+            chatID = messageDTOTwoSession.chatID.toString(),
+            senderID = messageDTOTwoSession.senderID.toString(),
+            recipientID = messageDTOTwoSession.recipientID.toString(),
+            text = message.text,
+            createdAt = now
+        )
 
         if (s1 != null) {
-            s1.session.send(message.text)
-            //FIXME save message in owner chat
-
+//            s1.session.send(message.toString())
+            s1.session.send(Json.encodeToJsonElement(messageForS1).toString())
         } else {
             println("ChatController fun sendMessage, s1 == null")
             //FIXME append notification
         }
 
         if (s2 != null) {
-            s2.session.send(message.text)
-            //FIXME save message in owner chat
+//            s2.session.send(message.toString())
+            s2.session.send(Json.encodeToJsonElement(messageForS2).toString())
         } else {
             println("ChatController fun sendMessage, s2 == null")
             //FIXME append notification
@@ -104,7 +121,7 @@ class ChatController() {
 
 
 
-    //FIXME down is now use
+    //FIXME down is not use
     fun getConnection(idOne: String?, idTwo: String?): Connection? {
         val chat = getChat(UUID.fromString(idOne), UUID.fromString(idTwo))
         return connections[chat!!.id.toString()]
@@ -141,7 +158,7 @@ class ChatController() {
     suspend fun sendMessageT(ownerID: UUID, companionID: UUID, messageJson: String) {
         val messageReceiveRemote = Json.decodeFromString<MessageReceiveRemote>(messageJson)
 
-        val currentDate = LocalDate.now()
+        val currentDate = java.util.Date().time
         val chatID = UUID.fromString(messageReceiveRemote.chatID)
         val senderID = UUID.fromString(messageReceiveRemote.senderID)
         val recipientID = UUID.fromString(messageReceiveRemote.recipientID)
@@ -196,7 +213,7 @@ class ChatController() {
     }
 
     fun createChat(ownerID: UUID, companionID: UUID): ChatDTO? {
-        val date = LocalDate.now()
+        val date = java.util.Date().time
         val ownerChatDTO = ChatDTO(
             id = UUID.randomUUID(),
             ownerID = ownerID,

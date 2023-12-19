@@ -9,18 +9,24 @@ import io.ktor.server.request.*
 class MatchController() {
 
     suspend fun getExistMatchSenderIDCheck(id: UUID): List<MatchDTO>? { // where sender is recipient
+        println("\n MatchController getExistMatchSenderIDCheck(id: UUID) START")
         return MatchModel.fetchSender(id)
     }
 
     suspend fun getExistMatchRecipientIDCheck(id: UUID): List<MatchDTO>? {
+        println("\n MatchController getExistMatchRecipientIDCheck(id: UUID) START")
         return MatchModel.fetchRecipiend(id)
     }
 
     suspend fun getExistMatchSenRecIDChek(senID: UUID, recID: UUID): MatchDTO? {
+        println("\n MatchController getExistMatchSenRecIDChek(senID: UUID, recID: UUID) START")
+
         return MatchModel.fetchSenderRecipient(senID, recID)
     }
 
     suspend fun updateMatch(senCardID: UUID, recCardID: UUID): MatchDTO? {
+        println("\n MatchController updateMatch(senCardID: UUID, recCardID: UUID) START")
+
         val matchSenderIsSender = getExistMatchSenRecIDChek(senCardID, recCardID)
         val matchSenderIsRecipient = getExistMatchSenRecIDChek(recCardID, senCardID)
         return if (matchSenderIsSender != null) {
@@ -39,6 +45,10 @@ class MatchController() {
     }
 
     suspend fun createMatch(matchCreate: MatchCreateReceiveRemote): MatchResponse? {
+        println("\n MatchController createMatch(matchCreate: MatchCreateReceiveRemote) START")
+        //fixme: create simple and correct chat create
+
+
         val existMatchSenderIsSender =
             MatchModel.fetchSenderRecipient(
                 UUID.fromString(matchCreate.cardIdSender),
@@ -50,8 +60,6 @@ class MatchController() {
                 UUID.fromString(matchCreate.cardIdRecipient),
                 UUID.fromString(matchCreate.cardIdSender)
             )
-
-
 
         return if (existMatchSenderIsSender != null) {
             existMatchSenderIsSender.senderShow += 1
@@ -68,11 +76,13 @@ class MatchController() {
             )
 
         } else if (existMatchSenderIsRecipient != null) {
+            println("\n existMatchSenderIsRecipient \n")
+
             existMatchSenderIsRecipient.recipientShow += 1
             existMatchSenderIsRecipient.match = true
             MatchModel.updateFromRecipient(existMatchSenderIsRecipient)
 
-            val currentDate = LocalDate.now()
+            val currentDate = java.util.Date().time
             val chatOwnerIsSender = ChatDTO(
                 id = UUID.randomUUID(),
                 ownerID = existMatchSenderIsRecipient.idSender,
@@ -110,7 +120,7 @@ class MatchController() {
                     recipientShow = 0,
                     senderShow = 1,
                     match = false,
-                    createdAt = LocalDate.now(),
+                    createdAt = java.util.Date().time,
                     idSender = UUID.fromString(matchCreate.idSender),
                     idRecipient = recipient.id
                 )

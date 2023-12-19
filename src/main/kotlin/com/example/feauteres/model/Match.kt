@@ -33,7 +33,7 @@ class MatchDTO(
     var recipientShow: Int,
     var senderShow: Int,
     var match: Boolean,
-    val createdAt: LocalDate,
+    val createdAt: Long,
     val idSender: UUID,
     val idRecipient: UUID
 )
@@ -45,7 +45,7 @@ object MatchModel: Table("match") {
     private var recipientShow: Column<Int> = MatchModel.integer("rec_show")
     private var senderShow: Column<Int> = MatchModel.integer("sen_show")
     private var match: Column<Boolean> = MatchModel.bool("match")
-    private val createdAt: Column<LocalDate> = MatchModel.date("created_at")
+    private val createdAt: Column<Long> = MatchModel.long("created_at")
     private val idSender: Column<UUID> = MatchModel.uuid("id_sen")
     private val idRecipient: Column<UUID> = MatchModel.uuid("id_rec")
 

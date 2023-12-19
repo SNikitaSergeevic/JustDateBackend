@@ -14,27 +14,36 @@ class OwnerController() {
         println("NewOwnerController updateOwner() START")
 
         var updateRemote = localCall.receive<UpdateOwnerReceiveRemote>()
+        val currentOwner = OwnerModel.fetch(UUID.fromString(updateRemote.id))
 
+        val now = java.util.Date().time
 
-        OwnerModel.update(
-            OwnerDTO(id = UUID.fromString(updateRemote.id, ),
-            email = updateRemote.email,
-            password = "",
-            location = updateRemote.location,
-            cardID = UUID.fromString(updateRemote.cardID),
-            createdAt = LocalDate.now())
-        )
-        CardModel.update(
-            CardDTO(id = UUID.fromString(updateRemote.cardID),
-            name = updateRemote.name,
-            description = updateRemote.description,
-            location = updateRemote.location,
-            age = updateRemote.age,
-            sex = updateRemote.sex,
-            createdAt = LocalDate.now(),
-            lastAuth = LocalDate.now())
-        )
-        localCall.respond(HttpStatusCode.OK, "Owner updated")
+        if (currentOwner != null) {
+            val currentCard = CardModel.fetch(currentOwner.cardID)
+            OwnerModel.update(
+                owner = OwnerDTO(id = UUID.fromString(updateRemote.id),
+                email = updateRemote.email,
+                password = "",
+                location = updateRemote.location,
+                cardID = UUID.fromString(updateRemote.cardID),
+                createdAt = currentOwner.createdAt)
+            )
+            if (currentCard != null) {
+                CardModel.update(
+                    CardDTO(id = UUID.fromString(updateRemote.cardID),
+                    name = updateRemote.name,
+                    description = updateRemote.description,
+                    location = updateRemote.location,
+                    age = updateRemote.age,
+                    sex = updateRemote.sex,
+                    createdAt = currentCard.lastAuth,
+                    lastAuth =  now)
+                )
+            }
+            localCall.respond(HttpStatusCode.OK, "Owner updated")
+        } else {
+            localCall.respond(HttpStatusCode.NotFound)
+        }
     }
 
     suspend fun fetchPublicOwner(localCall: ApplicationCall): PublicOwnerResponse? {
@@ -113,6 +122,7 @@ class OwnerController() {
     suspend fun registerOwner(localCall: ApplicationCall): PrivateOwnerResponse? {
         var register = localCall.receive<OwnerRegisterReceiveRemote>()
         val ownerModel = OwnerModel.fetch(email = register.email)
+        val now = java.util.Date().time
 
         if (ownerModel != null) {
             localCall.respond(HttpStatusCode.Conflict, "User already exist")
@@ -129,8 +139,8 @@ class OwnerController() {
                 location = register.location,
                 age = register.age,
                 sex = register.sex,
-                createdAt = LocalDate.now(),
-                lastAuth = LocalDate.now()
+                createdAt = now,
+                lastAuth = now
             )
 
             val newOwnerDTO = OwnerDTO(
@@ -139,7 +149,7 @@ class OwnerController() {
                 password = register.password,
                 location = register.location,
                 cardID = idForCard,
-                createdAt = LocalDate.now()
+                createdAt = now
             )
 
             CardModel.create(cardDTO)

@@ -2,10 +2,7 @@ package com.example.plugins.news
 
 import com.example.feauteres.controllers.ChatController
 import com.example.feauteres.controllers.MemberAlreadyExistException
-import com.example.feauteres.model.ChatModel
-import com.example.feauteres.model.ChatResponse
-import com.example.feauteres.model.MessageReceiveRemote
-import com.example.feauteres.model.SessionData
+import com.example.feauteres.model.*
 import com.example.plugins.Endpoint
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
@@ -112,26 +109,31 @@ fun Application.chatConfigure(chatController: ChatController) {
 
             webSocket(Endpoint.ChatConnect.str) {
                 println("\n ChatConnect START! \n")
-                val myID = call.parameters["myID"]
+                val myID = call.parameters["ownerID"]
                 val companionID = call.parameters["companionID"]
+
+                println("\n ChatConnect parameters save $myID and $companionID \n")
 
                 //todo: Check existing chat for two users
                 val companionSessionID = chatController.getChat(UUID.fromString(companionID), UUID.fromString(myID))
                 val meSessionID = chatController.getChat(UUID.fromString(myID), UUID.fromString(companionID))
 
-//                if (companionSessionID == null || meSessionID == null) {
-//                    println("\n not exist chat \n")
-//                    close(CloseReason(CloseReason.Codes.NORMAL, "not exist chat"))
-//                }
+                println("\n ChatConnect chat $companionSessionID \n")
+                println("\n ChatConnect chat $meSessionID \n")
 
-                val miConnect = chatController.createConnection(myID, companionID, this)
+                if (companionSessionID == null || meSessionID == null) {
+                    println("\n not exist chat \n")
+                    close(CloseReason(CloseReason.Codes.CANNOT_ACCEPT, "not exist chat"))
+                }
+
+                val miConnection = chatController.createConnection(myID, companionID, this)
 
                 try {
                     while (true) {
                         when (val frame = incoming.receive()) {
                             is Frame.Text -> {
                                 val message = Json.decodeFromString<MessageReceiveRemote>(frame.readText())
-                                chatController.sendMessage(message, meSessionID.toString(), companionSessionID.toString())
+                                chatController.sendMessage(message, meSessionID?.id.toString(), companionSessionID?.id.toString())
                             }
                             else -> TODO()
                         }
@@ -146,12 +148,13 @@ fun Application.chatConfigure(chatController: ChatController) {
             get(Endpoint.GetChat.str) {
                 val ownerID = call.parameters["ownerID"]
                 val companionID = call.parameters["companionID"]
+                println("ownerID - $ownerID, companionID - $companionID")
 
                 try {
                     val chat = chatController.getChat(UUID.fromString(ownerID), UUID.fromString(companionID))
+                    println("\n chat - $chat \n")
                     if (chat != null) {
                         call.respond(
-                            HttpStatusCode.Accepted,
                             ChatResponse(
                                 id = chat.id.toString(),
                                 ownerID = chat.ownerID.toString(),
@@ -164,6 +167,42 @@ fun Application.chatConfigure(chatController: ChatController) {
                 }
 
 
+            }
+
+            // todo: DEV
+            get("/auth/checkAllChats/{ownerID}") {
+                val ownerID = call.parameters["ownerID"]
+                val chats = ChatModel.fetchOwnerChats(UUID.fromString(ownerID))
+                if (chats != null) {
+                    call.respond(chats.map {
+                        ChatResponse(
+                            id = it.id.toString(),
+                            ownerID = it.ownerID.toString(),
+                            companionID = it.companionID.toString()
+                        )
+                    })
+                } else {
+                    call.respond(HttpStatusCode.NotFound)
+                }
+            }
+
+            get("/auth/allMessage/{chatID}") {
+                val chatID = call.parameters["chatID"]
+                val messages = MessageModel.fetchMessage(UUID.fromString(chatID))
+                if (messages != null) {
+                    call.respond(messages.map {
+                        MessageResponseRemote(
+                            id = it.id.toString(),
+                            chatID = it.chatID.toString(),
+                            senderID = it.senderID.toString(),
+                            recipientID = it.recipientID.toString(),
+                            text = it.text,
+                            createdAt = it.createdAt
+                        )
+                    })
+                } else {
+                    call.respond(HttpStatusCode.NotFound)
+                }
             }
 
         }

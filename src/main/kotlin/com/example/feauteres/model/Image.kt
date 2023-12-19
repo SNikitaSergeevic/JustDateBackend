@@ -13,13 +13,13 @@ data class ImageResponse (val id: String,
                           val path: String,
                           val cardID: String,
                           val fileName: String,
-                          val createdAt: String)
+                          val createdAt: Long)
 
 class ImageDTO (val id: UUID,
                 val path: String,
                 val cardID: UUID,
                 val fileName: String,
-                val createdAt: LocalDate)
+                val createdAt: Long)
 
 
 
@@ -29,7 +29,7 @@ object ImageModel: Table("image") {
     private val path: Column<String> = ImageModel.varchar("path", 255)
     private val cardID: Column<UUID> = ImageModel.uuid("card_id")
     private val fileName: Column<String> = ImageModel.varchar("file_name", 255)
-    private val createdAt: Column<LocalDate> = ImageModel.date("created_at")
+    private val createdAt: Column<Long> = ImageModel.long("created_at")
 
     fun create(imageDTO: ImageDTO) {
         transaction {

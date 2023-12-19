@@ -2,7 +2,9 @@ package com.example.plugins.news
 
 import com.example.feauteres.controllers.CardController
 import com.example.feauteres.controllers.MatchController
+import com.example.feauteres.model.ChatModel
 import com.example.feauteres.model.MatchCreateReceiveRemote
+import com.example.feauteres.model.MatchModel
 import com.example.feauteres.model.MatchResponse
 import com.example.plugins.Endpoint
 import kotlinx.serialization.Serializable
@@ -29,6 +31,7 @@ fun Application.matchConfigure() {
 
                     if (matches != null) {
                         call.respond(HttpStatusCode.Accepted, matches.map {
+
                             MatchResponse(
                                 id = it.id.toString(),
                                 cardIdSender = it.cardIdSender.toString(),
@@ -39,6 +42,7 @@ fun Application.matchConfigure() {
                                 idSender = it.idSender.toString(),
                                 idRecipient = it.idRecipient.toString()
                             )
+
                         })
                     } else {
                         call.respond(HttpStatusCode.NotFound)
@@ -57,6 +61,7 @@ fun Application.matchConfigure() {
 
                     if (matches != null) {
                         call.respond(HttpStatusCode.Accepted, matches.map {
+
                             MatchResponse(
                                 id = it.id.toString(),
                                 cardIdSender = it.cardIdSender.toString(),
@@ -83,7 +88,6 @@ fun Application.matchConfigure() {
                     val senCardID = call.parameters["senCardID"]
                     val recCardID = call.parameters["recCardID"]
                     val match = matchController.updateMatch(UUID.fromString(senCardID), UUID.fromString(recCardID))
-
 
                     if (match != null) {
                         call.respond(

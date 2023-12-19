@@ -24,8 +24,8 @@ data class CardRemote(
     val age: Int,
     val sex: String,
     val imageIDs: List<ImageResponse>,
-    val createdAt: String,
-    val lastAuth: String
+    val createdAt: Long,
+    val lastAuth: Long
 )
 
 @Serializable
@@ -37,8 +37,8 @@ class CardDTO(val id: UUID,
               val location: String,
               val age: Int,
               val sex: String,
-              val createdAt: LocalDate,
-              val lastAuth: LocalDate)
+              val createdAt: Long,
+              val lastAuth: Long)
 
 object CardModel: Table("card") {
     private val id: Column<UUID> = CardModel.uuid("id")
@@ -47,8 +47,8 @@ object CardModel: Table("card") {
     private val location: Column<String> = CardModel.varchar("location", 255)
     private val age: Column<Int> = CardModel.integer("age")
     private val sex: Column<String> = CardModel.varchar("sex", 255)
-    private val createdAt: Column<LocalDate> = CardModel.date("created_at")
-    private val lastAuth: Column<LocalDate> = CardModel.date("last_auth")
+    private val createdAt: Column<Long> = CardModel.long("created_at")
+    private val lastAuth: Column<Long> = CardModel.long("last_auth")
 
     fun create(card: CardDTO) {
         println("CardModel create(card: CardDTO) START")

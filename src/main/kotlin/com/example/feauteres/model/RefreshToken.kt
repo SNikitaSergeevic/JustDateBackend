@@ -16,18 +16,18 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 data class RefreshToken(val id: String,
                         val ownerID: String,
                         val token: String,
-                        val createdAt: String)
+                        val createdAt: Long)
 
 class RefreshTokenDTO(val id: UUID,
                       val ownerID: UUID,
                       val token: String,
-                      val createdAt: LocalDate)
+                      val createdAt: Long)
 
 object RefreshTokenModel: Table("refresh_token") {
     private val id: Column<UUID> = RefreshTokenModel.uuid("id")
     private val ownerID: Column<UUID> = RefreshTokenModel.uuid("owner_id")
     private val token: Column<String> = RefreshTokenModel.varchar("token", 255)
-    private val createdAt: Column<LocalDate> = RefreshTokenModel.date("created_at")
+    private val createdAt: Column<Long> = RefreshTokenModel.long("created_at")
 
     fun create(refreshToken: RefreshTokenDTO) {
         println("RefreshTokenModel create(token: TokenDTO) START")

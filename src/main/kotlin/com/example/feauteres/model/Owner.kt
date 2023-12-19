@@ -94,7 +94,7 @@ class OwnerDTO(
     val password: String,
     val location: String,
     val cardID: UUID,
-    val createdAt: LocalDate
+    val createdAt: Long
 )
 
 object OwnerModel : Table("owner") {
@@ -103,7 +103,7 @@ object OwnerModel : Table("owner") {
     private val password: Column<String> = OwnerModel.varchar("password", 255)
     private val location: Column<String> = OwnerModel.varchar("location", 255)
     private val cardID: Column<UUID> = OwnerModel.uuid("card_id")
-    private val createdAt: Column<LocalDate> = OwnerModel.date("created_at")
+    private val createdAt: Column<Long> = OwnerModel.long("created_at")
 
     fun create(owner: OwnerDTO) {
         transaction {

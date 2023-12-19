@@ -26,8 +26,8 @@ class CardController() {
                     age = it.age,
                     sex = it.sex,
                     imageIDs = imageResponseList,
-                    createdAt = it.createdAt.toString(),
-                    lastAuth = it.lastAuth.toString()
+                    createdAt = it.createdAt,
+                    lastAuth = it.lastAuth
                 )
             }
             return cardRemote

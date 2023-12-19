@@ -46,7 +46,7 @@ class ImagesController() {
                             path = "src/main/resources/static/users/$text",
                             cardID = card!!.id,
                             fileName = "${fileName + "." + fileExtension}",
-                            createdAt = LocalDate.now()
+                            createdAt = java.util.Date().time
                         )
                         ImageModel.create(imageDTO)
 
@@ -79,7 +79,7 @@ class ImagesController() {
                 path = it.path,
                 cardID = it.cardID.toString(),
                 fileName = it.fileName,
-                createdAt = it.createdAt.toString()
+                createdAt = it.createdAt
             )
             }
         }

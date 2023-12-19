@@ -13,7 +13,7 @@ class RefreshTokenController(private val email: String, private val ownerID: UUI
     fun createRefreshToken(): String {
         val refreshToken = (Random.nextInt(1000).toString() + email).hashCode().toString()
         val tokenID: UUID = UUID.randomUUID()
-        val token = RefreshTokenDTO(id = tokenID, ownerID = ownerID, token = refreshToken, createdAt = LocalDate.now())
+        val token = RefreshTokenDTO(id = tokenID, ownerID = ownerID, token = refreshToken, createdAt = java.util.Date().time)
         RefreshTokenModel.create(token)
         return refreshToken
     }
