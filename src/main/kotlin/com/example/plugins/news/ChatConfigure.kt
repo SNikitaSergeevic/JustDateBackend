@@ -173,6 +173,7 @@ fun Application.chatConfigure(chatController: ChatController) {
             get("/auth/checkAllChats/{ownerID}") {
                 val ownerID = call.parameters["ownerID"]
                 val chats = ChatModel.fetchOwnerChats(UUID.fromString(ownerID))
+                println("\n ${call.response.headers} \n")
                 if (chats != null) {
                     call.respond(chats.map {
                         ChatResponse(
