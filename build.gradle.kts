@@ -8,9 +8,10 @@ val swagger_codegen_version: String by project
 val koin_version : String by project
 
 plugins {
+//    application
     kotlin("jvm") version "1.9.0"
     id("io.ktor.plugin") version "2.3.2"
-                id("org.jetbrains.kotlin.plugin.serialization") version "1.9.0"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.0"
 }
 
 group = "com.example"
@@ -24,6 +25,7 @@ application {
 
 repositories {
     mavenCentral()
+//    maven { url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap") }
 }
 
 dependencies {
@@ -43,7 +45,15 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-java-time:$exposed_version")
 
+
+
     implementation("io.ktor:ktor-server-swagger-jvm:$ktor_version")
+    implementation("io.ktor:ktor-server-openapi:$ktor_version")
+    implementation("io.swagger.codegen.v3:swagger-codegen-generators:$swagger_codegen_version")
+//    implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
+//    implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
+
+
     implementation("io.ktor:ktor-server-sessions-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")

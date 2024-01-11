@@ -1,23 +1,362 @@
 openapi: "3.0.3"
 info:
-  title: "Application API"
-  description: "Application API"
+  title: "com_example_justdatebackend API"
+  description: "com_example_justdatebackend API"
   version: "1.0.0"
 servers:
-  - url: "http://0.0.0.0:8443"
+- url: "https://com_example_justdatebackend"
 paths:
   /:
+    post:
+      description: ""
+  /auth/allMessage/{chatID}:
     get:
-      description: "Hello World!"
+      description: ""
+      parameters:
+      - name: "chatID"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
       responses:
         "200":
           description: "OK"
           content:
-            text/plain:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/MessageResponseRemote"
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+  /auth/checkAllChats/{ownerID}:
+    get:
+      description: "todo: DEV"
+      parameters:
+      - name: "ownerID"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/ChatResponse"
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+  /auth/talk:
+    get:
+      description: ""
+      parameters:
+      - name: "Connection"
+        in: "header"
+        required: true
+        description: "Websocket Connection parameter"
+        schema:
+          type: "string"
+      - name: "Upgrade"
+        in: "header"
+        required: true
+        description: "Websocket Upgrade parameter"
+        schema:
+          type: "string"
+      - name: "Sec-WebSocket-Key"
+        in: "header"
+        required: true
+        description: "Websocket Sec-WebSocket-Key parameter"
+        schema:
+          type: "string"
+      responses:
+        "101":
+          description: "Switching Protocols"
+          headers:
+            Connection:
+              required: true
               schema:
                 type: "string"
-              examples:
-                Example#1:
-                  value: "Hello World!"
+            Upgrade:
+              required: true
+              schema:
+                type: "string"
+            Sec-WebSocket-Accept:
+              required: true
+              schema:
+                type: "string"
 components:
   schemas:
+    ChatResponse:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        ownerID:
+          type: "string"
+        companionID:
+          type: "string"
+      required:
+      - "id"
+      - "ownerID"
+      - "companionID"
+    StackTraceElement:
+      type: "object"
+      properties:
+        classLoaderName:
+          type: "string"
+        moduleName:
+          type: "string"
+        moduleVersion:
+          type: "string"
+        methodName:
+          type: "string"
+        fileName:
+          type: "string"
+        lineNumber:
+          type: "integer"
+          format: "int32"
+    Throwable:
+      type: "object"
+      properties:
+        cause:
+          $ref: "#/components/schemas/Throwable"
+        stackTrace:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/StackTraceElement"
+    Exception:
+      type: "object"
+      properties:
+        cause:
+          $ref: "#/components/schemas/Throwable"
+        stackTrace:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/StackTraceElement"
+    MessageResponseRemote:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        chatID:
+          type: "string"
+        senderID:
+          type: "string"
+        recipientID:
+          type: "string"
+        text:
+          type: "string"
+        createdAt:
+          type: "integer"
+          format: "int64"
+      required:
+      - "id"
+      - "chatID"
+      - "senderID"
+      - "recipientID"
+      - "text"
+    FetchCardSexReceiveRemote:
+      type: "object"
+      properties:
+        sex:
+          type: "string"
+      required:
+      - "sex"
+    ImageResponse:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        path:
+          type: "string"
+        cardID:
+          type: "string"
+        fileName:
+          type: "string"
+        createdAt:
+          type: "integer"
+          format: "int64"
+      required:
+      - "id"
+      - "path"
+      - "cardID"
+      - "fileName"
+    CardRemote:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        name:
+          type: "string"
+        description:
+          type: "string"
+        location:
+          type: "string"
+        age:
+          type: "integer"
+          format: "int32"
+        sex:
+          type: "string"
+        imageIDs:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ImageResponse"
+        createdAt:
+          type: "integer"
+          format: "int64"
+        lastAuth:
+          type: "integer"
+          format: "int64"
+      required:
+      - "id"
+      - "name"
+      - "description"
+      - "location"
+      - "sex"
+      - "imageIDs"
+    CardResponse:
+      type: "object"
+      properties:
+        cards:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/CardRemote"
+      required:
+      - "cards"
+    TagRemoteResponse:
+      type: "object"
+      properties:
+        tagID:
+          type: "string"
+        tagName:
+          type: "string"
+        tagsID:
+          type: "string"
+        cardID:
+          type: "string"
+      required:
+      - "tagID"
+      - "tagName"
+      - "tagsID"
+      - "cardID"
+    TagsCreateReceiveRemote:
+      type: "object"
+      properties:
+        tagName:
+          type: "string"
+        cardID:
+          type: "string"
+      required:
+      - "tagName"
+      - "cardID"
+    TagsSetReceiveRemote:
+      type: "object"
+      properties:
+        cardID:
+          type: "string"
+        tagID:
+          type: "string"
+      required:
+      - "cardID"
+      - "tagID"
+    PublicOwnerResponse:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        cardID:
+          type: "string"
+        location:
+          type: "string"
+        name:
+          type: "string"
+        description:
+          type: "string"
+        age:
+          type: "integer"
+          format: "int32"
+        sex:
+          type: "string"
+      required:
+      - "id"
+      - "cardID"
+      - "location"
+      - "name"
+      - "description"
+      - "sex"
+    OwnerRegisterReceiveRemote:
+      type: "object"
+      properties:
+        email:
+          type: "string"
+        password:
+          type: "string"
+        name:
+          type: "string"
+        location:
+          type: "string"
+        description:
+          type: "string"
+        age:
+          type: "integer"
+          format: "int32"
+        sex:
+          type: "string"
+      required:
+      - "email"
+      - "password"
+      - "name"
+      - "location"
+      - "description"
+      - "sex"
+    MatchResponse:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        cardIdSender:
+          type: "string"
+        cardIdRecipient:
+          type: "string"
+        recipientShow:
+          type: "integer"
+          format: "int32"
+        senderShow:
+          type: "integer"
+          format: "int32"
+        match:
+          type: "boolean"
+        idSender:
+          type: "string"
+        idRecipient:
+          type: "string"
+      required:
+      - "id"
+      - "cardIdSender"
+      - "cardIdRecipient"
+      - "idSender"
+      - "idRecipient"
+    MatchCreateReceiveRemote:
+      type: "object"
+      properties:
+        cardIdSender:
+          type: "string"
+        cardIdRecipient:
+          type: "string"
+        idSender:
+          type: "string"
+      required:
+      - "cardIdSender"
+      - "cardIdRecipient"
+      - "idSender"

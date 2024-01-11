@@ -5,11 +5,10 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
-import java.time.LocalDate
 import java.util.*
 
 class OwnerController() {
-
+    val secretController = SecretController()
     suspend fun updateOwner(localCall: ApplicationCall) {
         println("NewOwnerController updateOwner() START")
 
@@ -119,37 +118,38 @@ class OwnerController() {
         }
     }
 
-    suspend fun registerOwner(localCall: ApplicationCall): PrivateOwnerResponse? {
-        var register = localCall.receive<OwnerRegisterReceiveRemote>()
-        val ownerModel = OwnerModel.fetch(email = register.email)
-        val now = java.util.Date().time
+    suspend fun registerOwner(call: ApplicationCall): PrivateOwnerResponse? {
+        var registerIntent = call.receive<OwnerRegisterReceiveRemote>()
+        val ownerModel = OwnerModel.fetch(email = registerIntent.email)
+        val timestamp = java.util.Date().time
 
         if (ownerModel != null) {
-            localCall.respond(HttpStatusCode.Conflict, "User already exist")
+            call.respond(HttpStatusCode.Conflict, "User already exist")
             return null
         } else {
             val idForOwner = UUID.randomUUID()
             val idForCard = UUID.randomUUID()
-            val tokenController = RefreshTokenController(register.email, idForOwner)
+            val tokenController = RefreshTokenController(registerIntent.email, idForOwner)
 
             val cardDTO = CardDTO(
                 id = idForCard,
-                name = register.name,
-                description = register.description,
-                location = register.location,
-                age = register.age,
-                sex = register.sex,
-                createdAt = now,
-                lastAuth = now
+                name = registerIntent.name,
+                description = registerIntent.description,
+                location = registerIntent.location,
+                age = registerIntent.age,
+                sex = registerIntent.sex,
+                createdAt = timestamp,
+                lastAuth = timestamp
             )
 
+            val passwordHash = secretController.generateHash(registerIntent.password, timestamp.toString())
             val newOwnerDTO = OwnerDTO(
                 id = idForOwner,
-                email = register.email,
-                password = register.password,
-                location = register.location,
+                email = registerIntent.email,
+                password = passwordHash,
+                location = registerIntent.location,
                 cardID = idForCard,
-                createdAt = now
+                createdAt = timestamp
             )
 
             CardModel.create(cardDTO)
@@ -161,22 +161,21 @@ class OwnerController() {
                 cardID = idForCard.toString(),
                 refreshToken = refreshToken,
                 accessToken = "",
-                email = register.email,
-                location = register.location,
-                name = register.name,
-                description = register.description,
-                age = register.age,
-                sex = register.sex
+                email = registerIntent.email,
+                location = registerIntent.location,
+                name = registerIntent.name,
+                description = registerIntent.description,
+                age = registerIntent.age,
+                sex = registerIntent.sex
             )
         }
 
     }
 
-
-    suspend fun authorisationOwnerWithRT(localCall: ApplicationCall): PrivateOwnerResponse? {
+    suspend fun authorisationOwnerWithRT(call: ApplicationCall): PrivateOwnerResponse? {
         println("NewOwnerController authorisationOwnerWithRT() START")
 
-        val authCall = localCall.receive<OwnerAuthReceiveRemote>()
+        val authCall = call.receive<OwnerAuthReceiveRemote>()
         val refreshTokenDTO = RefreshTokenModel.fetch(UUID.fromString(authCall.ownerID))
 
         if (refreshTokenDTO != null) {
@@ -185,8 +184,10 @@ class OwnerController() {
                 if (ownerDTO != null) {
                     val card = CardModel.fetch(ownerDTO.cardID)
                     if (card != null) {
-                        val refreshTokenController = RefreshTokenController(ownerDTO!!.email, ownerDTO!!.id)
+                        val refreshTokenController = RefreshTokenController(ownerDTO.email, ownerDTO.id)
+
                         if (refreshTokenController.checkRefreshToken()) refreshTokenController.deleteRefreshToken() else return null
+
                         val refreshToken = refreshTokenController.createRefreshToken()
                         return PrivateOwnerResponse(ownerDTO.id.toString(),
                             card.id.toString(),
@@ -199,46 +200,58 @@ class OwnerController() {
                             card.age,
                             card.sex)
                     } else {
+                        call.respond(HttpStatusCode.Conflict, "Card not exist")
                         return null
                     }
                 }
             }
+            call.respond(HttpStatusCode.Conflict, "not valid token or owner not exist")
             return null
         } else {
+            call.respond(HttpStatusCode.Conflict, "invalid token")
             return null
         }
     }
 
-    suspend fun loginOwner(localCall: ApplicationCall): PrivateOwnerResponse? {
+    suspend fun loginOwner(call: ApplicationCall): PrivateOwnerResponse? {
         println("NewOwnerController loginOwner() START")
 
-        val loginReceiveRemote = localCall.receive<OwnerLoginReceiveRemote>()
+        val loginReceiveRemote = call.receive<OwnerLoginReceiveRemote>()
         val ownerDTO = OwnerModel.fetch(email = loginReceiveRemote.email)
 
         println("NewOwnerController loginOwner() ${ownerDTO!!.email} ")
 
-        return if (ownerDTO != null && ownerDTO.password == loginReceiveRemote.password) {
-            val card = CardModel.fetch(ownerDTO.cardID)
-            if (card != null) {
-                val tokenController = RefreshTokenController(loginReceiveRemote.email, ownerDTO.id)
-                tokenController.deleteRefreshToken()
-                val refreshToken = tokenController.createRefreshToken()
-                PrivateOwnerResponse(ownerDTO.id.toString(),
-                    ownerDTO.cardID.toString(),
-                    refreshToken,
-                    "",
-                    ownerDTO.email,
-                    card.location,
-                    card.name,
-                    card.description,
-                    card.age,
-                    card.sex)
+        return if (ownerDTO != null) {
+            val passwordHash = secretController.generateHash(loginReceiveRemote.password, ownerDTO.createdAt.toString())
+
+            return if (passwordHash == ownerDTO.password) {
+                val card = CardModel.fetch(ownerDTO.cardID)
+                if (card != null) {
+                    val tokenController = RefreshTokenController(loginReceiveRemote.email, ownerDTO.id)
+                    tokenController.deleteRefreshToken()
+                    val refreshToken = tokenController.createRefreshToken()
+                    PrivateOwnerResponse(ownerDTO.id.toString(),
+                        ownerDTO.cardID.toString(),
+                        refreshToken,
+                        "",
+                        ownerDTO.email,
+                        card.location,
+                        card.name,
+                        card.description,
+                        card.age,
+                        card.sex)
+                } else {
+                    println("NewOwnerController loginOwner() card is null")
+                    call.respond(HttpStatusCode.Conflict, "Owner card not exist")
+                    null
+                }
             } else {
-                println("NewOwnerController loginOwner() card is null")
+                call.respond(HttpStatusCode.Conflict, "Incorrect login or password")
                 null
             }
+
         } else {
-            localCall.respond(HttpStatusCode.Conflict, "Incorrect login or password")
+            call.respond(HttpStatusCode.Conflict, "Incorrect login or password")
             null
         }
     }

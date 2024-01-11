@@ -99,6 +99,7 @@ enum class Endpoint(val str: String) {
     Authorisation("/authorisation"),
     Login("/login"),
     AuthCheck("/authCheck"),
+
     DeleteOwner("/auth/deleteOwner"),
     UpdateOwner("/auth/updateOwner"),
     FetchPublicOwner("/auth/fetchPublicOwner/{ownerID}"),
