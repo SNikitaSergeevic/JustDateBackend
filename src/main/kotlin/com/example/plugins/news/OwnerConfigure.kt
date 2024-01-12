@@ -93,7 +93,7 @@ fun Application.ownerConfigure(
                 try {
                     val ownerController = OwnerController()
                     ownerController.updateOwner(call)
-                    call.respond(HttpStatusCode.OK, "Owner updated")
+//                    call.respond(HttpStatusCode.OK, "Owner updated")
                 } catch (e: Exception) {
                     call.respond(HttpStatusCode.Conflict)
                 }

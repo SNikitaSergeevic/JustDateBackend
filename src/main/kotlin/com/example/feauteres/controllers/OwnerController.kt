@@ -9,39 +9,52 @@ import java.util.*
 
 class OwnerController() {
     val secretController = SecretController()
-    suspend fun updateOwner(localCall: ApplicationCall) {
-        println("NewOwnerController updateOwner() START")
+    suspend fun updateOwner(call: ApplicationCall) {
+        println("OwnerController updateOwner() START")
 
-        var updateRemote = localCall.receive<UpdateOwnerReceiveRemote>()
+        var updateRemote = call.receive<UpdateOwnerReceiveRemote>()
         val currentOwner = OwnerModel.fetch(UUID.fromString(updateRemote.id))
 
         val now = java.util.Date().time
 
         if (currentOwner != null) {
+
             val currentCard = CardModel.fetch(currentOwner.cardID)
-            OwnerModel.update(
-                owner = OwnerDTO(id = UUID.fromString(updateRemote.id),
-                email = updateRemote.email,
-                password = "",
-                location = updateRemote.location,
-                cardID = UUID.fromString(updateRemote.cardID),
-                createdAt = currentOwner.createdAt)
-            )
-            if (currentCard != null) {
-                CardModel.update(
-                    CardDTO(id = UUID.fromString(updateRemote.cardID),
-                    name = updateRemote.name,
-                    description = updateRemote.description,
-                    location = updateRemote.location,
-                    age = updateRemote.age,
-                    sex = updateRemote.sex,
-                    createdAt = currentCard.lastAuth,
-                    lastAuth =  now)
+            val remoteRefreshToken = updateRemote.refreshToken
+            val currentRefreshToken = RefreshTokenModel.fetch(currentOwner.id)
+
+            if (currentRefreshToken != null && currentCard != null && remoteRefreshToken == currentRefreshToken.token) {
+
+                OwnerModel.update(
+                    owner = OwnerDTO(
+                        id = UUID.fromString(updateRemote.id),
+                        email = updateRemote.email,
+                        password = currentOwner.password,
+                        location = updateRemote.location,
+                        cardID = UUID.fromString(updateRemote.cardID),
+                        createdAt = currentOwner.createdAt
+                    )
                 )
+
+                CardModel.update(
+                    CardDTO(
+                        id = UUID.fromString(updateRemote.cardID),
+                        name = updateRemote.name,
+                        description = updateRemote.description,
+                        location = updateRemote.location,
+                        age = updateRemote.age,
+                        sex = updateRemote.sex,
+                        createdAt = currentCard.lastAuth,
+                        lastAuth = now
+                    )
+                )
+                call.respond(HttpStatusCode.OK, "owner and card updated")
+
+            } else {
+                call.respond(HttpStatusCode.Conflict, "invalid token or not exist card")
             }
-            localCall.respond(HttpStatusCode.OK, "Owner updated")
         } else {
-            localCall.respond(HttpStatusCode.NotFound)
+            call.respond(HttpStatusCode.NotFound)
         }
     }
 

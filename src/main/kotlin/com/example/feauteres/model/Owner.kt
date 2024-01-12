@@ -54,6 +54,7 @@ data class UpdateOwnerReceiveRemote(
     val id: String,
     val cardID: String,
     val email: String,
+    val refreshToken: String,
     val location: String,
     val name: String,
     val description: String,
