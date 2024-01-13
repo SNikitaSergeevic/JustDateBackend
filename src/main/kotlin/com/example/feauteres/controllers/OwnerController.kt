@@ -117,18 +117,24 @@ class OwnerController() {
 
     }
 
-    suspend fun deleteOwner(localCall: ApplicationCall) {
-        println("NewOwnerController deleteOwner() START")
+    suspend fun deleteOwner(call: ApplicationCall) {
+        println("OwnerController deleteOwner() START")
 
         try {
-            val deleteRemote = localCall.receive<DeleteOwnerReceiveRemote>()
-            RefreshTokenModel.deleteToken(UUID.fromString(deleteRemote.id))
-            OwnerModel.delete(UUID.fromString(deleteRemote.id))
-            CardModel.delete(UUID.fromString(deleteRemote.cardID))
-            localCall.respond(HttpStatusCode.OK, "Owner deleted")
-        } catch (e: Exception) {
+            val deleteRemote = call.receive<DeleteOwnerReceiveRemote>()
 
+            if (RefreshTokenModel.deleteToken(UUID.fromString(deleteRemote.id))) {
+                OwnerModel.delete(UUID.fromString(deleteRemote.id))
+                CardModel.delete(UUID.fromString(deleteRemote.cardID))
+                call.respond(HttpStatusCode.OK, "Owner deleted")
+            } else {
+                call.respond(HttpStatusCode.Conflict, "invalid token")
+            }
+
+        } catch (e: Exception) {
+            println(e.localizedMessage)
         }
+
     }
 
     suspend fun registerOwner(call: ApplicationCall): PrivateOwnerResponse? {

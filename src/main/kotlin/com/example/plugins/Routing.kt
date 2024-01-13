@@ -105,7 +105,7 @@ enum class Endpoint(val str: String) {
     FetchPublicOwner("/auth/fetchPublicOwner/{ownerID}"),
     FetchPrivateOwner("/auth/fetchPrivateOwner}"),
     //todo: image
-    SetImage("/auth/setImage"),
+    SetImage("/auth/setImage/{cardID}"),
     GetImages("/auth/getImage/{imageID}"),
     GetImage("/auth/getImage/{cardID}/{imageID}"),
     GetImagesIdWithCardid("/auth/getImagesId/{cardID}"),

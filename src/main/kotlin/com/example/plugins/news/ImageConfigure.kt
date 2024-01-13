@@ -47,10 +47,15 @@ fun Application.imageConfigure() {
                 }
             }
 
+//            post(Endpoint.SetImage.str) {
+//                val multipart = call.receiveMultipart()
+//                val imageController = ImagesController()
+//                imageController.setImage(multipart)
+//            }
+
             post(Endpoint.SetImage.str) {
-                val multipart = call.receiveMultipart()
                 val imageController = ImagesController()
-                imageController.setImage(multipart)
+                imageController.setImageDev(call)
             }
 
         }

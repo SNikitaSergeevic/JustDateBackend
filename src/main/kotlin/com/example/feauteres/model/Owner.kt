@@ -38,7 +38,8 @@ data class OwnerRegisterReceiveRemote(
 @Serializable
 data class DeleteOwnerReceiveRemote(
     val id: String,
-    val cardID: String
+    val cardID: String,
+    val refreshToken: String
 )
 
 @Serializable

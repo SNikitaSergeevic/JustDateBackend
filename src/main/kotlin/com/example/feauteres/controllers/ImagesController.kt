@@ -1,11 +1,14 @@
 package com.example.feauteres.controllers
 
 import com.example.feauteres.model.*
+import io.ktor.http.*
 import io.ktor.http.content.*
+import io.ktor.server.application.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.time.LocalDate
 import java.util.*
 
 
@@ -13,15 +16,15 @@ import java.util.*
 class ImagesController() {
 
     suspend fun setImage(multipart: MultiPartData) {
-        var text = ""
+        var cardID = ""
         var fileName = ""
         var card: CardDTO? = null
 
         multipart.forEachPart { part ->
             when(part) {
                 is PartData.FormItem -> {
-                    text = part.value
-                    card = CardModel.fetch(UUID.fromString(text))
+                    cardID = part.value
+                    card = CardModel.fetch(UUID.fromString(cardID))
                 }
 
                 is PartData.FileItem -> {
@@ -30,10 +33,10 @@ class ImagesController() {
                         fileName = UUID.randomUUID().toString()
 
 
-                        val folder = File("src/main/resources/static/users/$text")
+                        val folder = File("src/main/resources/static/users/$cardID")
                         folder.mkdir()
 
-                        val file = File("src/main/resources/static/users/$text/${fileName + "." + fileExtension}")
+                        val file = File("src/main/resources/static/users/$cardID/${fileName + "." + fileExtension}")
 
                         part.streamProvider().use { its ->
                             file.outputStream().buffered().use {
@@ -43,7 +46,7 @@ class ImagesController() {
 
                         val imageDTO = ImageDTO(
                             id = UUID.fromString(fileName),
-                            path = "src/main/resources/static/users/$text",
+                            path = "src/main/resources/static/users/$cardID",
                             cardID = card!!.id,
                             fileName = "${fileName + "." + fileExtension}",
                             createdAt = java.util.Date().time
@@ -52,7 +55,7 @@ class ImagesController() {
 
 
                     } else {
-                        println("Card this id NOT FOUND")
+                        println("Card id NOT FOUND")
                     }
                 }
                 is PartData.BinaryItem -> UInt
@@ -60,6 +63,61 @@ class ImagesController() {
             }
             part.dispose()
         }
+    }
+
+    suspend fun setImageDev(call: ApplicationCall) {
+        val cardID = call.parameters["cardID"]
+        val validToken = false
+        var remoteRToken = ""
+        var fileName = ""
+        var card: CardDTO? = CardModel.fetch(UUID.fromString(cardID))
+        val multipart = call.receiveMultipart()
+
+        if (card != null) {
+            multipart.forEachPart { part ->
+                when (part) {
+                    is PartData.FormItem -> {
+                        remoteRToken = part.value
+                    }
+
+                    is PartData.FileItem -> {
+                        if (RefreshTokenModel.tokenCheck(remoteRToken)) {
+                            val fileExtension = part.originalFileName?.takeLastWhile { it != '.' }
+                            fileName = UUID.randomUUID().toString()
+
+                            val folder = File("src/main/resources/static/users/$cardID")
+                            folder.mkdir()
+
+                            val file = File("src/main/resources/static/users/$cardID/${fileName + "." + fileExtension}")
+                            part .streamProvider().use { its ->
+                                file.outputStream().buffered().use {
+                                    its.copyTo(it)
+                                }
+                            }
+
+                            val imageDTO = ImageDTO (
+                                id = UUID.fromString(fileName),
+                                path = "stc/main/resources/static/users/$cardID",
+                                cardID = card.id,
+                                fileName = "${fileName + "." + fileExtension}",
+                                createdAt = java.util.Date().time
+                            )
+                            ImageModel.create(imageDTO)
+                        } else {
+                            call.respond(HttpStatusCode.Conflict, "invalid token")
+                        }
+                    }
+
+                    is PartData.BinaryItem -> UInt
+                    is PartData.BinaryChannelItem -> TODO()
+                }
+                part.dispose()
+            }
+        } else {
+            call.respond(HttpStatusCode.NotFound, "card not found")
+        }
+
+
     }
 
     fun getImage(cardID: String, imageID: String): File? {

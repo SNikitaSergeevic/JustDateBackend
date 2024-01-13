@@ -59,14 +59,31 @@ object RefreshTokenModel: Table("refresh_token") {
 
     }
 
-    fun deleteToken(ownerID: UUID) {
+    fun tokenCheck(token: String): Boolean {
+        return try {
+            transaction {
+                val tokenModel = RefreshTokenModel.select{RefreshTokenModel.token.eq(token)}.single()
+                if (tokenModel != null) {
+                    true
+                } else {
+                    false
+                }
+            }
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    fun deleteToken(ownerID: UUID): Boolean {
         println("RefreshTokenModel deleteToken(ownerID: UUID) START")
         try {
             transaction {
                 RefreshTokenModel.deleteWhere { RefreshTokenModel.ownerID.eq(ownerID)}
             }
+            return true
         } catch (e: Exception) {
             println(e)
+            return false
         }
     }
 

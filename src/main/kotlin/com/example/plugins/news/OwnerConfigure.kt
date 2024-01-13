@@ -76,17 +76,11 @@ fun Application.ownerConfigure(
             get(Endpoint.FetchPublicOwner.str) {
                 val ownerController = OwnerController()
                 val owner = ownerController.fetchPublicOwner(call)
-
                 if (owner != null) {
                     call.respond(owner)
                 } else {
                     call.respond(HttpStatusCode.NotFound)
                 }
-
-            }
-
-            post(Endpoint.FetchPrivateOwner.str) {
-
             }
 
             post(Endpoint.UpdateOwner.str) {
